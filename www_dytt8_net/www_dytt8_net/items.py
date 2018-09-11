@@ -15,4 +15,5 @@ class WwwDytt8NetItem(scrapy.Item):
     publish_time = scrapy.Field()
     images = scrapy.Field()
     download_links = scrapy.Field()
+    contents = scrapy.Field()
     pass
