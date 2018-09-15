@@ -28,16 +28,11 @@ class Dytt8Spider(CrawlSpider):
     def parse_item(self, response):
         if self.__ERROR_INFO in response.text:
             return
-        # item = WwwDytt8NetItem()
         loader = Dytt8Loader(item=WwwDytt8NetItem(), response=response)
         loader.add_xpath("title", '//div[@class="title_all"]/h1/font/text()')
-
-        # item['title'] = response.xpath('//div[@class="title_all"]/h1/font/text()').extract_first()
-        # item['publish_time'] = response.xpath('//div[@class="co_content8"]/ul/text()').extract_first().strip().replace('发布时间：', '')
-        # imgs_xpath = response.xpath('//div[@id="Zoom"]//img')
-        # item['images'] = [i.xpath('./@src').extract_first() for i in imgs_xpath if i.xpath('./@src')]
-        # item['download_links'] = re.compile('<a href="(ftp://.*?)">').findall(response.text)
-        # item['contents'] = [i.strip().replace('\n', '').replace('\r', '') for i in response.xpath('string(//div[@id="Zoom"])').extract()]
-
+        loader.add_xpath('publish_time', '//div[@class="co_content8"]/ul/text()', re='发布时间：(\d{4}-\d{2}-\d{2})')
+        loader.add_xpath('images', '//div[@id="Zoom"]//img//@src')
+        loader.add_xpath('download_links', '*', re='<a href="(ftp://.*?)">')
+        loader.add_xpath("contents", 'string(//div[@id="Zoom"])')
         yield loader.load_item()
 
