@@ -4,7 +4,7 @@ import scrapy
 import sys
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
-from scrapy.loader.processors import Compose
+from www_dytt8_net.loaders import Dytt8Loader
 from www_dytt8_net.items import WwwDytt8NetItem
 
 
@@ -28,11 +28,16 @@ class Dytt8Spider(CrawlSpider):
     def parse_item(self, response):
         if self.__ERROR_INFO in response.text:
             return
-        item = WwwDytt8NetItem()
-        item['title'] = response.xpath('//div[@class="title_all"]/h1/font/text()').extract_first()
-        item['publish_time'] = response.xpath('//div[@class="co_content8"]/ul/text()').extract_first().strip().replace('发布时间：', '')
-        imgs_xpath = response.xpath('//div[@id="Zoom"]//img')
-        item['images'] = [i.xpath('./@src').extract_first() for i in imgs_xpath if i.xpath('./@src')]
-        item['download_links'] = re.compile('<a href="(ftp://.*?)">').findall(response.text)
-        item['contents'] = [i.strip().replace('\n', '').replace('\r', '') for i in response.xpath('string(//div[@id="Zoom"])').extract()]
-        yield item
+        # item = WwwDytt8NetItem()
+        loader = Dytt8Loader(item=WwwDytt8NetItem(), response=response)
+        loader.add_xpath("title", '//div[@class="title_all"]/h1/font/text()')
+
+        # item['title'] = response.xpath('//div[@class="title_all"]/h1/font/text()').extract_first()
+        # item['publish_time'] = response.xpath('//div[@class="co_content8"]/ul/text()').extract_first().strip().replace('发布时间：', '')
+        # imgs_xpath = response.xpath('//div[@id="Zoom"]//img')
+        # item['images'] = [i.xpath('./@src').extract_first() for i in imgs_xpath if i.xpath('./@src')]
+        # item['download_links'] = re.compile('<a href="(ftp://.*?)">').findall(response.text)
+        # item['contents'] = [i.strip().replace('\n', '').replace('\r', '') for i in response.xpath('string(//div[@id="Zoom"])').extract()]
+
+        yield loader.load_item()
+
