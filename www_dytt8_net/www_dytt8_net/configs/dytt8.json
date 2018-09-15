@@ -1,0 +1,24 @@
+{
+  "spider": "common_spider",
+  "website": "",
+  "type": "",
+  "settings": {
+     "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
+  },
+  "start_urls":{
+    "type": "static",
+    "value": ["http://www.dytt8.net/"],
+  },
+  "allowed_domains": ["www.dytt8.net"],
+  "rules": "dytt8",
+  "item": {
+    "class": "WwwDytt8NetItem",
+    "loader": "Dytt8Loader",
+    "attrs": {
+      "title":[
+        {"method": "xpath",
+        "args": ["//div[@class='title_all']/h1/font/text()"]}
+      ]
+    }
+  }
+}

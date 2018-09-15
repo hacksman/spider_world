@@ -19,3 +19,8 @@ class WwwDytt8NetItem(scrapy.Item):
     download_links = scrapy.Field()
     contents = scrapy.Field()
     pass
+
+
+class NewsItem(scrapy.Item):
+    title = scrapy.Field()
+

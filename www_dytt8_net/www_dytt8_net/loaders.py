@@ -13,3 +13,11 @@ class Dytt8Loader(ExtractLoader):
     download_links_out = Identity()
     contents_out = Compose(Join(), lambda s: s.strip().replace('\n', '').replace('\r', ''))
     pass
+
+
+class NewsLoader(ItemLoader):
+    default_output_processor = TakeFirst()
+
+class ChinaLoader(NewsLoader):
+    text_out = Compose(Join(), lambda s: s.strip())
+    source_out = Compose(Join(), lambda s: s.strip())
