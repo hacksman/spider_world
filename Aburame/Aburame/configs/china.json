@@ -1,0 +1,35 @@
+{
+  "spider": "shino",
+  "website": "中华网科技",
+  "type": "新闻",
+  "index": "http://tech.china.com/",
+  "settings": {
+    "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
+  },
+  "start_urls": {
+    "type": "dynamic",
+    "method": "china",
+    "args": [
+      5,
+      10
+    ]
+  },
+  "allowed_domains": [
+    "tech.china.com"
+  ],
+  "rules": "china",
+  "item": {
+    "class": "NewsItem",
+    "loader": "ChinaLoader",
+    "attrs": {
+      "title": [
+        {
+          "method": "xpath",
+          "args": [
+            "//h1[@id='chan_newsTitle']/text()"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "spider": "shino",
+  "website": "站酷网",
+  "type": "设计",
+  "index": "https://www.zcool.com.cn/",
+  "settings": {
+    "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
+    "MONGODB_URI": "mongodb://localhost:27017",
+    "MONGODB_DATABASE": "zcool",
+    "MONGODB_COLLECTION": "scrapy_zcool_test",
+    "ITEM_PIPELINES": {
+       "scrapy_mongodb.MongoDBPipeline": 300
+    }
+  },
+  "start_urls": {
+    "type": "static",
+    "value": ["https://www.zcool.com.cn/"]
+  },
+  "allowed_domains": [
+    "zcool.com.cn"
+  ],
+  "rules": "zcool",
+  "item": {
+    "class": "ZcoolItem",
+    "loader": "ZcoolInfoLoader",
+    "attrs": {
+      "designer": [
+        {
+          "method": "xpath",
+          "args": [
+            "//p[@class='people-nick-name']/text()"
+          ]
+        }
+      ]
+    }
+  }
+}
