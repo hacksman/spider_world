@@ -25,6 +25,38 @@
             "//p[@class='people-nick-name']/text()"
           ]
         }
+      ],
+      "hot": [
+        {
+          "method": "xpath",
+          "args": [
+            "//a[@z-st='userHome_top_num_viewcount']/text()"
+          ]
+        }
+      ],
+      "score": [
+        {
+          "method": "xpath",
+          "args": [
+            "//a[@z-st='userHome_top_num_score']/text()"
+          ]
+        }
+      ],
+      "fans": [
+        {
+          "method": "xpath",
+          "args": [
+            "//a[@z-st='userHome_top_num_following']/text()"
+          ]
+        }
+      ],
+      "follow": [
+        {
+          "method": "xpath",
+          "args": [
+            "//a[@z-st='userHome_top_num_following']/text()"
+          ]
+        }
       ]
     }
   }

@@ -23,8 +23,9 @@ rules = {
     ),
 
     'zcool': (
-        Rule(LinkExtractor(allow='.*www.zcool.com.cn\/u\/.*'),
-             callback='parse_item'),
+        Rule(LinkExtractor(allow='https://[A-Za-z_]+.zcool.com.cn$'), callback='parse_item'),
+        Rule(LinkExtractor(allow='.*www.zcool.com.cn\/u\/.*'), callback='parse_item'),
         Rule(LinkExtractor(restrict_xpaths='//a[@class="laypage_next"]'))
     )
+    # https://xuyiyun.zcool.com.cn
 }

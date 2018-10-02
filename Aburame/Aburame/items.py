@@ -27,5 +27,9 @@ class NewsItem(scrapy.Item):
 
 class ZcoolItem(scrapy.Item):
     designer = scrapy.Field()
+    hot = scrapy.Field()
+    score = scrapy.Field()
+    fans = scrapy.Field()
+    follow = scrapy.Field()
 
 

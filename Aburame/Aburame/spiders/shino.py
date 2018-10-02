@@ -11,6 +11,7 @@ from Aburame.loaders import *
 
 class ShinoSpider(CrawlSpider):
     name = 'shino'
+
     def __init__(self, name, *args, **kwargs):
         config = get_config(name)
         self.config = config
