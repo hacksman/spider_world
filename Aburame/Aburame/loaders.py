@@ -29,3 +29,4 @@ class ChinaLoader(NewsLoader):
 
 class ZcoolInfoLoader(ExtractLoader):
     designer_out = Compose(Join(), lambda s: s.strip().replace('\n', '').replace('\r', ''))
+    hometown_out = Compose(Join(), lambda s: s.strip().replace('\n', '').replace('\r', ''))

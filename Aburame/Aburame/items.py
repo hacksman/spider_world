@@ -31,5 +31,11 @@ class ZcoolItem(scrapy.Item):
     score = scrapy.Field()
     fans = scrapy.Field()
     follow = scrapy.Field()
+    sex = scrapy.Field()
+    signal = scrapy.Field()
+    hometown = scrapy.Field()
+    live = scrapy.Field()
+    job = scrapy.Field()
+    age = scrapy.Field()
 
 

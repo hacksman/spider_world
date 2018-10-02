@@ -23,9 +23,14 @@ rules = {
     ),
 
     'zcool': (
-        Rule(LinkExtractor(allow='https://[A-Za-z_]+.zcool.com.cn$'), callback='parse_item'),
-        Rule(LinkExtractor(allow='.*www.zcool.com.cn\/u\/.*'), callback='parse_item'),
-        Rule(LinkExtractor(restrict_xpaths='//a[@class="laypage_next"]'))
+        Rule(LinkExtractor(restrict_xpaths='//a[@class="laypage_next"]')),
+        Rule(LinkExtractor(allow='.*www.zcool.com.cn\/u\/\d+$')),
+        # Rule(LinkExtractor(restrict_xpaths='//a[@class="visitor-name"]')),
+        # Rule(LinkExtractor(restrict_xpaths='//a[@class="userimg"]')),
+        # Rule(LinkExtractor(allow='//a[@class="userHome_tab_profile"]'), callback='parse_item'),
+        Rule(LinkExtractor(allow='.*profile#tab_anchor$'), callback='parse_item'),
+        # Rule(LinkExtractor(restrict_xpaths='//a[@class="userHome_tab_profile"]'), callback='parse_item'),
+        # Rule(LinkExtractor(allow='.*www.zcool.com.cn.*?profile#tab_anchor$'), callback='parse_item')
     )
     # https://xuyiyun.zcool.com.cn
 }

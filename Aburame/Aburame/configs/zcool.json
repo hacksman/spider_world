@@ -57,6 +57,54 @@
             "//a[@z-st='userHome_top_num_following']/text()"
           ]
         }
+      ],
+      "sex": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '性别')]/../td/text()"
+          ]
+        }
+      ],
+      "signal": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '签名')]/../td/text()"
+          ]
+        }
+      ],
+      "hometown": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '家乡')]/../td/text()"
+          ]
+        }
+      ],
+      "live": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '现居')]/../td/text()"
+          ]
+        }
+      ],
+      "job": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '职业')]/../td/text()"
+          ]
+        }
+      ],
+      "age": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '酷龄')]/../td/text()"
+          ]
+        }
       ]
     }
   }
