@@ -105,6 +105,22 @@
             "//th[contains(text(), '酷龄')]/../td/text()"
           ]
         }
+      ],
+      "school": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '毕业院校')]/../td/text()"
+          ]
+        }
+      ],
+      "introduce": [
+        {
+          "method": "xpath",
+          "args": [
+            "//p[@class='attestation-introduction']/text()"
+          ]
+        }
       ]
     }
   }

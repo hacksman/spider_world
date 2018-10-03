@@ -37,5 +37,7 @@ class ZcoolItem(scrapy.Item):
     live = scrapy.Field()
     job = scrapy.Field()
     age = scrapy.Field()
+    introduce = scrapy.Field()
+    school = scrapy.Field()
 
 

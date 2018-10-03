@@ -4,7 +4,7 @@
   "type": "设计",
   "index": "https://www.zcool.com.cn/",
   "settings": {
-    "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
+    "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
     "MONGODB_URI": "mongodb://localhost:27017",
     "MONGODB_DATABASE": "zcool",
     "MONGODB_COLLECTION": "scrapy_zcool_test",
@@ -29,6 +29,102 @@
           "method": "xpath",
           "args": [
             "//p[@class='people-nick-name']/text()"
+          ]
+        }
+      ],
+      "hot": [
+        {
+          "method": "xpath",
+          "args": [
+            "//a[@z-st='userHome_top_num_viewcount']/text()"
+          ]
+        }
+      ],
+      "score": [
+        {
+          "method": "xpath",
+          "args": [
+            "//a[@z-st='userHome_top_num_score']/text()"
+          ]
+        }
+      ],
+      "fans": [
+        {
+          "method": "xpath",
+          "args": [
+            "//a[@z-st='userHome_top_num_following']/text()"
+          ]
+        }
+      ],
+      "follow": [
+        {
+          "method": "xpath",
+          "args": [
+            "//a[@z-st='userHome_top_num_following']/text()"
+          ]
+        }
+      ],
+      "sex": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '性别')]/../td/text()"
+          ]
+        }
+      ],
+      "signal": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '签名')]/../td/text()"
+          ]
+        }
+      ],
+      "hometown": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '家乡')]/../td/text()"
+          ]
+        }
+      ],
+      "live": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '现居')]/../td/text()"
+          ]
+        }
+      ],
+      "job": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '职业')]/../td/text()"
+          ]
+        }
+      ],
+      "age": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '酷龄')]/../td/text()"
+          ]
+        }
+      ],
+      "school": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '毕业院校')]/../td/text()"
+          ]
+        }
+      ],
+      "introduce": [
+        {
+          "method": "xpath",
+          "args": [
+            "//p[@class='attestation-introduction']/text()"
           ]
         }
       ]
