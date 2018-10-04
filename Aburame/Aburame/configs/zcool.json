@@ -4,11 +4,15 @@
   "type": "设计",
   "index": "https://www.zcool.com.cn/",
   "settings": {
-    "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
+    "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+    "HOST": "https://www.zcool.com.cn/"
   },
   "start_urls": {
     "type": "static",
-    "value": ["https://www.zcool.com.cn/"]
+    "value": [
+      "https://www.zcool.com.cn/",
+      "https://www.zcool.com.cn/designer"
+    ]
   },
   "allowed_domains": [
     "zcool.com.cn"
@@ -23,6 +27,14 @@
           "method": "xpath",
           "args": [
             "//p[@class='people-nick-name']/text()"
+          ]
+        }
+      ],
+      "url": [
+        {
+          "method": "xpath",
+          "args": [
+            "//a[@z-st='userHome_tab_home']/@href"
           ]
         }
       ],
@@ -46,7 +58,7 @@
         {
           "method": "xpath",
           "args": [
-            "//a[@z-st='userHome_top_num_following']/text()"
+            "//a[@z-st='userHome_top_num_fans']/text()"
           ]
         }
       ],
@@ -114,11 +126,59 @@
           ]
         }
       ],
+      "equipment": [
+        {
+          "method": "xpath",
+          "args": [
+            "//div[contains(text(), '个人装备')]/..//span[@class='worktag-con']/text()"
+          ]
+        }
+      ],
+      "label": [
+        {
+          "method": "xpath",
+          "args": [
+            "//div[contains(text(), '个人标签')]/..//span[@class='worktag-con']/text()"
+          ]
+        }
+      ],
+      "personal_link": [
+        {
+          "method": "xpath",
+          "args": [
+            "//a[@z-st='userHome_home_link']/@href"
+          ]
+        }
+      ],
       "introduce": [
         {
           "method": "xpath",
           "args": [
             "//p[@class='attestation-introduction']/text()"
+          ]
+        }
+      ],
+      "brief": [
+        {
+          "method": "xpath",
+          "args": [
+            "//td[@class='brief-introduction']//text()"
+          ]
+        }
+      ],
+      "qq": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), 'QQ')]/../td/text()"
+          ]
+        }
+      ],
+      "wechat": [
+        {
+          "method": "xpath",
+          "args": [
+            "//th[contains(text(), '微信')]/../td/text()"
           ]
         }
       ]

@@ -5,6 +5,7 @@
 import base64
 from six.moves.urllib.request import getproxies, proxy_bypass
 from six.moves.urllib.parse import unquote
+import requests
 try:
     from urllib2 import _parse_proxy
 except ImportError:
@@ -16,24 +17,29 @@ from scrapy.exceptions import NotConfigured
 from scrapy.utils.python import to_bytes
 
 from scrapy.downloadermiddlewares.httpproxy import HttpProxyMiddleware
+from logging import getLogger
+
+import time
 
 
 class RandomProxyMiddleware(HttpProxyMiddleware):
+    logger = getLogger("RandomProxyMiddleware")
 
-    def __init__(self, auth_encoding='latin-1'):
+    def __init__(self, auth_encoding='latin-1', host=None):
         super(RandomProxyMiddleware, self).__init__()
         self.auth_encoding = auth_encoding
         self.proxies = {}
+        self.host = host
         for type, url in getproxies().items():
             self.proxies[type] = self._get_proxy(url, type)
-        print(print("Play>>>>", self.proxies))
 
     @classmethod
     def from_crawler(cls, crawler):
         if not crawler.settings.getbool('HTTPPROXY_ENABLED'):
             raise NotConfigured
         auth_encoding = crawler.settings.get('HTTPPROXY_AUTH_ENCODING')
-        return cls(auth_encoding)
+        host = crawler.settings.get('HOST')
+        return cls(auth_encoding, host)
 
     def _basic_auth_header(self, username, password):
         user_pass = to_bytes(
@@ -54,6 +60,7 @@ class RandomProxyMiddleware(HttpProxyMiddleware):
 
     def process_request(self, request, spider):
         # ignore if proxy is already set
+        request.meta['proxy'] = requests.get('http://your_ip.com')
         if 'proxy' in request.meta:
             if request.meta['proxy'] is None:
                 return
@@ -81,3 +88,4 @@ class RandomProxyMiddleware(HttpProxyMiddleware):
         request.meta['proxy'] = proxy
         if creds:
             request.headers['Proxy-Authorization'] = b'Basic ' + creds
+

@@ -39,5 +39,12 @@ class ZcoolItem(scrapy.Item):
     age = scrapy.Field()
     introduce = scrapy.Field()
     school = scrapy.Field()
+    url = scrapy.Field()
+    equipment = scrapy.Field()
+    label = scrapy.Field()
+    personal_link = scrapy.Field()
+    qq = scrapy.Field()
+    wechat = scrapy.Field()
+    brief = scrapy.Field()
 
 

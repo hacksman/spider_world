@@ -24,17 +24,14 @@ rules = {
 
     'zcool': (
         Rule(LinkExtractor(restrict_xpaths='//a[@class="laypage_next"]')),
-        Rule(LinkExtractor(restrict_xpaths='//a[@class="visitor-name"]')),
-        Rule(LinkExtractor(restrict_xpaths='//a[@class="card-img-hover"]')),
-        Rule(LinkExtractor(restrict_xpaths='//a[@class="usernick"]')),
         Rule(LinkExtractor(allow='.*www.zcool.com.cn\/u\/\d+$')),
+        Rule(LinkExtractor(restrict_xpaths='//a[@z-st="user_content_card_1_user_name"]')),
+        Rule(LinkExtractor(restrict_xpaths='//a[starts-with(@z-st, "desinger_filter_recommend")]')),
+        Rule(LinkExtractor(restrict_xpaths='//a[starts-with(@z-st, "desinger_filter_profession")]')),
+        # Rule(LinkExtractor(restrict_xpaths='//a[@class="usernick"]')),
         # Rule(LinkExtractor(restrict_xpaths='//a[@class="visitor-name"]')),
-        # Rule(LinkExtractor(restrict_xpaths='//a[@class="userimg"]')),
-        # Rule(LinkExtractor(allow='//a[@class="userHome_tab_profile"]'), callback='parse_item'),
-        # Rule(LinkExtractor(allow='.*?profile#tab_anchor$'), callback='parse_item'),
+        Rule(LinkExtractor(allow='.*?fans.*')),
+        Rule(LinkExtractor(allow='.*?follow.*')),
         Rule(LinkExtractor(allow='.*?profile.*'), callback='parse_item'),
-        # Rule(LinkExtractor(restrict_xpaths='//a[@class="userHome_tab_profile"]'), callback='parse_item'),
-        # Rule(LinkExtractor(allow='.*www.zcool.com.cn.*?profile#tab_anchor$'), callback='parse_item')
     )
-    # https://xuyiyun.zcool.com.cn
 }

@@ -31,3 +31,7 @@ class ZcoolInfoLoader(ExtractLoader):
     designer_out = Compose(Join(), lambda s: s.strip().replace('\n', '').replace('\r', ''))
     hometown_out = Compose(Join(), lambda s: s.strip().replace('\n', '').replace('\r', ''))
     introduce_out = Compose(Join(), lambda s: s.strip().replace('\n', '').replace('\r', ''))
+    brief_out = Compose(Join("\n"))
+    equipment_out = Identity()
+    label_out = Identity()
+    personal_link_out = Identity()

@@ -55,7 +55,7 @@ ROBOTSTXT_OBEY = False
 DOWNLOADER_MIDDLEWARES = {
    # 'Aburame.middlewares.MyCustomDownloaderMiddleware': 543,
     'Aburame.random_useragent_middleware.RandomUserAgentMiddleware': 500,
-    'Aburame.random_proxy_middleware.RandomProxyMiddleware': 500,
+    'Aburame.random_proxy_middleware.RandomProxyMiddleware': 501,
 }
 
 # Enable or disable extensions
@@ -92,3 +92,7 @@ DOWNLOADER_MIDDLEWARES = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 HTTPPROXY_ENABLED = True
+HTTPERROR_ALLOWED_CODES = [404, 410]
+
+
+
