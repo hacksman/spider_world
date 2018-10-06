@@ -40,9 +40,8 @@ def getDevice():
     #resp = requests.get(API + "/douyin/device/new").json()
     resp = requests.get(API + "/douyin/device/new/version/2.7.0").json()
     # resp = requests.get(API + "/douyin/device/new/version/").json()
-    print(resp)
     device_info = resp['data']
-    print("设备信息: " + str(device_info))
+    # print("设备信息: " + str(device_info))
     return device_info
 
 # 拼装参数
@@ -51,7 +50,7 @@ def params2str(params):
     for k, v in params.items():
         query += "%s=%s&" % (k, v)
     query = query.strip("&")
-    print("Sign str: " + query)
+    # print("Sign str: " + query)
     return query
 
 # 使用拼装参数签名
@@ -59,7 +58,7 @@ def getSign(token, query):
     if isinstance(query, dict):
         query = params2str(query)
     resp = requests.post(API + "/sign", json={"token": token, "query": query}).json()
-    print("签名返回: " + str(resp))
+    # print("签名返回: " + str(resp))
     sign = resp['data']
     return sign
 

@@ -5,6 +5,7 @@
 import requests
 import time
 import json
+import os
 
 from www_douyin_com.common.utils import *
 
@@ -30,10 +31,11 @@ class DouyinCrawl(object):
     }
 
     __USER_VIDEO_PARAMS = {
-        "count": "12",
+        "count": "21",
         # "offset": "0",
         "user_id": None,
-        "max_cursor": str(int(time.time())) + "000",
+        # "max_cursor": str(int(time.time())) + "000",
+        "max_cursor": "0",
     }
 
     def __init__(self):
@@ -48,11 +50,6 @@ class DouyinCrawl(object):
     def __generate_sign(self, token, params):
         sign = getSign(token, params)
         return sign
-
-    def spider_video(self, url):
-        resp = requests.get(url)
-        print(resp.status_code)
-        print(resp.text)
 
     def grab_follow_list(self, user_id, offset=0):
         follow_params = self.__FOLLOW_LIST_PARAMS
@@ -74,7 +71,9 @@ class DouyinCrawl(object):
         persons = resp.json().get('followings')
 
         for per_person in persons:
-            self.grab_user_video(per_person)
+            has_more, max_cursor = self.grab_user_video(per_person)
+            while has_more:
+                has_more, max_cursor = self.grab_user_video(per_person, max_cursor)
             break
 
 
@@ -87,7 +86,7 @@ class DouyinCrawl(object):
         # for i in range(1, total_offset):
             # offset
 
-    def grab_user_video(self, user_info):
+    def grab_user_video(self, user_info, max_cursor=0):
         nickname = user_info.get('nickname')
         unique_id = user_info.get('unique_id')
         uid = user_info.get('uid')
@@ -97,6 +96,7 @@ class DouyinCrawl(object):
 
         user_video_params = self.__USER_VIDEO_PARAMS
         user_video_params['user_id'] = uid
+        user_video_params['max_cursor'] = max_cursor
 
         query_params = {**user_video_params, **self.common_params}
         sign = getSign(self.__get_token(), query_params)
@@ -107,12 +107,16 @@ class DouyinCrawl(object):
                             headers=self.__HEADERS)
 
         video_infos = resp.json().get("aweme_list")
+        has_more = resp.json().get("has_more")
+        max_cursor = resp.json().get("max_cursor")
 
         for per_video in video_infos:
             aweme_id = per_video.get("aweme_id")
-            self.download_video(aweme_id)
+            self.download_video(aweme_id, nickname)
 
-    def download_video(self, aweme_id):
+        return has_more, max_cursor
+
+    def download_video(self, aweme_id, nickname):
         query_params = self.common_params
         query_params['aweme_id'] = aweme_id
 
@@ -133,11 +137,14 @@ class DouyinCrawl(object):
 
         content = requests.get(play_addr).content
 
-        with open('../videos/{}.mp4'.format(aweme_id), 'wb') as f:
+        if not os.path.exists("../videos/{}".format(nickname)):
+            os.makedirs('../videos/{}'.format(nickname))
+
+        with open('../videos/{}/{}.mp4'.format(nickname, aweme_id), 'wb') as f:
             f.write(content)
 
 
 if __name__ == '__main__':
     douyin = DouyinCrawl()
-    user_id = '000000'
+    user_id = '00000'
     douyin.grab_follow_list(user_id, offset=0)
