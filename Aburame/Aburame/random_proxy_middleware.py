@@ -60,7 +60,8 @@ class RandomProxyMiddleware(HttpProxyMiddleware):
 
     def process_request(self, request, spider):
         # ignore if proxy is already set
-        request.meta['proxy'] = requests.get('http://your_ip')
+        proxy = self.__get_dynamic_proxy(self.host)
+        request.meta['proxy'] = proxy.get('http')
         if 'proxy' in request.meta:
             if request.meta['proxy'] is None:
                 return
@@ -89,3 +90,19 @@ class RandomProxyMiddleware(HttpProxyMiddleware):
         if creds:
             request.headers['Proxy-Authorization'] = b'Basic ' + creds
 
+    def __get_dynamic_proxy(self, host):
+        for _ in range(3):
+            try:
+                r = requests.get('http://{}:{}/proxy/{}'.format("192.168.0.90", 9300, host), timeout=10)
+                if r is None or r.status_code != 200 or 'failed' in r.text or 'False' in r.text:
+                    time.sleep(1)
+                    self.logger.warn("动态代理服务异常, 重试...")
+                    continue
+                self.logger.info('鲲鹏 ip = {ip}'.format(ip=r.text))
+                proxies = {'http': 'http://{host}'.format(host=r.text)}
+                return proxies
+            except Exception as e:
+                self.logger.error("动态代理访问异常:")
+                self.logger.exception(e)
+                time.sleep(1)
+                return {}

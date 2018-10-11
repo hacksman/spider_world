@@ -8,7 +8,14 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 import time
 import json
+import re
 import os
+import sys
+
+sys.path.append('../')
+sys.path.append('../../')
+sys.path.append('../../../')
+
 from www_douyin_com.common.utils import *
 from www_douyin_com.common.log_handler import getLogger
 
@@ -26,6 +33,7 @@ class DouyinCrawl(object):
     __VIDEO_DETAIL_URL          = "https://aweme.snssdk.com/aweme/v1/aweme/detail/"
     __FAVORITE_URL              = "https://aweme.snssdk.com/aweme/v1/aweme/favorite/"
     __POST_URL                  = "https://aweme.snssdk.com/aweme/v1/aweme/post/"
+    # __FOLLOW_USER_URL           = "https://aweme.snssdk.com/aweme/v1/commit/follow/user/"
 
     # params
     __FOLLOW_LIST_PARAMS = {
@@ -84,7 +92,6 @@ class DouyinCrawl(object):
         #         has_more, max_cursor = self.grab_user_video(per_person, max_cursor)
         #     break
 
-
     def grab_video_main(self, user_id, user_type):
         count = 1
         self.logger.info("当前正在爬取 user id 为 {} 的第 👉 {} 👈 页内容...".format(user_id ,count))
@@ -113,7 +120,6 @@ class DouyinCrawl(object):
 
         hasmore = favorite_info.get('has_more')
         max_cursor = favorite_info.get('max_cursor')
-
         video_infos = favorite_info.get('aweme_list')
 
         for per_video in video_infos:
@@ -175,5 +181,12 @@ class DouyinCrawl(object):
 
 if __name__ == '__main__':
     douyin = DouyinCrawl()
-    user_id = '54878447962'
-    douyin.grab_video(user_id, "USER_POST")
+    input = input("请输入用户的id（11为纯数字）：")
+    user_id = '98524853984'
+    if not re.findall('^\d{11}$', input):
+        print("请输入正确的用户id， 用户id为11位纯数字")
+    else:
+        douyin.grab_video(input, "USER_POST")
+
+
+
