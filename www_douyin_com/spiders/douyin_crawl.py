@@ -181,12 +181,9 @@ class DouyinCrawl(object):
 
 if __name__ == '__main__':
     douyin = DouyinCrawl()
-    input = input("请输入用户的id（11为纯数字）：")
+    input = input("请输入用户的id（11位纯数字）：")
     user_id = '98524853984'
     if not re.findall('^\d{11}$', input):
         print("请输入正确的用户id， 用户id为11位纯数字")
     else:
         douyin.grab_video(input, "USER_POST")
-
-
-
