@@ -16,6 +16,8 @@ sys.path.append('../')
 sys.path.append('../../')
 sys.path.append('../../../')
 
+file_path_now = os.path.abspath(__file__)
+
 from www_douyin_com.common.utils import *
 from www_douyin_com.common.log_handler import getLogger
 
@@ -74,7 +76,7 @@ class DouyinCrawl(object):
             return self.__token
 
         # token有效期已过
-        if current_time - self.__token_last_time > self.__MAX_TOKEN_VALIDITY and self.__token:
+        if current_time - self.__token_last_time > self.__MAX_TOKEN_VALIDITY:
             self.logger.info("__token 在有效期内已过，重新获取...")
             self.__token = getToken()
             self.__token_last_time = current_time
@@ -170,11 +172,12 @@ class DouyinCrawl(object):
         if not video_content:
             self.logger.warn("你正在下载的视频，由于某种神秘力量的作用，已经凉凉了，请跳过...")
             return
+        file_path_grandfather = "/".join(file_path_now.split("/")[:-2])
 
-        if not os.path.exists("../videos/{}".format(author_nick_name)):
-            os.makedirs("../videos/{}".format(author_nick_name))
+        if not os.path.exists("{}/videos/{}".format(file_path_grandfather, author_nick_name)):
+            os.makedirs("{}/videos/{}".format(file_path_grandfather, author_nick_name))
 
-        with open("../videos/{}/{}.mp4".format(author_nick_name, video_name), 'wb') as f:
+        with open("{}/videos/{}/{}.mp4".format(file_path_grandfather, author_nick_name, video_name), 'wb') as f:
             f.write(video_content)
 
     def download_video(self, aweme_id):
@@ -198,6 +201,20 @@ class DouyinCrawl(object):
         play_addr = play_addr_raw[0]
         content = requests.get(play_addr).content
         return content
+
+    def download_one_video(self, aweme_id):
+        if not re.findall('^\d{19}$', aweme_id):
+            self.logger.error("download_one_video 收到错误的视频id，校验后再尝试")
+            self.logger.error("正确的视频id是19位纯数字")
+            return
+        author_nick_name = "单视频下载专用目录"
+        video_name = aweme_id
+        file_path_grandfather = "/".join(file_path_now.split("/")[:-2])
+        if not os.path.exists("{}/videos/{}".format(file_path_grandfather, author_nick_name)):
+            os.makedirs("{}/videos/{}".format(file_path_grandfather, author_nick_name))
+        video_content = self.download_video(aweme_id)
+        with open("{}/videos/{}/{}.mp4".format(file_path_grandfather, author_nick_name, video_name), 'wb') as f:
+            f.write(video_content)
 
 
 if __name__ == '__main__':
