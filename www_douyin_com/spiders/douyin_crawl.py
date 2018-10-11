@@ -54,11 +54,33 @@ class DouyinCrawl(object):
 
     # try times
 
+    # common
+    __MAX_TOKEN_VALIDITY = 60 * 50
+
     def __init__(self):
         self.common_params = common_params()
 
+        self.__token_last_time = int(time.time())
+
+        self.__token = None
+
     def __get_token(self):
-        return getToken()
+        current_time = int(time.time())
+
+        # 第一次获取token
+        if not self.__token:
+            self.__token_last_time = current_time
+            self.__token = getToken()
+            return self.__token
+
+        # token有效期已过
+        if current_time - self.__token_last_time > self.__MAX_TOKEN_VALIDITY and self.__token:
+            self.logger.info("__token 在有效期内已过，重新获取...")
+            self.__token = getToken()
+            self.__token_last_time = current_time
+            return self.__token
+
+        return self.__token
 
     def __get_device(self):
         return getDevice()
@@ -81,7 +103,6 @@ class DouyinCrawl(object):
 
         # 获取所有偏置数
         # total_offset_page = json.loads(resp.text).get("total") // 20
-
 
         # 提取每个人的视频
         persons = resp.json().get('followings')
