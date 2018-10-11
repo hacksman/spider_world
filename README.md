@@ -15,10 +15,9 @@
 该爬虫模块长期有效，后续会增加更多有趣的爬虫，如果对小伙伴们有帮助的话，请给我star鼓励，先谢过了
 
 
+### 如何使用抖音爬虫
 
 > python3下运行这个项目
-
-### 如何使用抖音爬虫
 
 ```angular2html
 $ git clone https://github.com/hacksman/spider_world.git
@@ -34,10 +33,10 @@ $ 请输入用户的id（11为纯数字）：
 你可以通过以下方式获取用户的id
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_1.jpeg" width="160">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_2.jpeg" width="160">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_3.jpeg" width="160">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_4.jpeg" width="160">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_5.jpeg" width="160">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_6.jpeg" width="160">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_1.jpeg" width="148">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_2.jpeg" width="148">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_3.jpeg" width="148">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_4.jpeg" width="148">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_5.jpeg" width="148">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_6.jpeg" width="148">
 </p>
