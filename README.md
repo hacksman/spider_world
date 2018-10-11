@@ -33,10 +33,10 @@ $ 请输入用户的id（11为纯数字）：
 你可以通过以下方式获取用户的id
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_1.jpeg" width="148">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_2.jpeg" width="148">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_3.jpeg" width="148">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_4.jpeg" width="148">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_5.jpeg" width="148">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_6.jpeg" width="148">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_1.jpeg" width="140">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_2.jpeg" width="140">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_3.jpeg" width="140">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_4.jpeg" width="140">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_5.jpeg" width="140">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_6.jpeg" width="140">
 </p>
