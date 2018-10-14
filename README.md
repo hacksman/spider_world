@@ -21,15 +21,16 @@
 
 ```angular2html
 $ git clone https://github.com/hacksman/spider_world.git
-$ cd spider_world/www_douyin_com/spiders/
-$ python douyin_crawl.py 
+$ cd spider_world/www_douyin_com/
+$ python video_download_run.py -upost 93515402600
 ```
-程序会稍等几秒，你会得到如下提示
-```angular2html
-$ 请输入用户的id（11位纯数字）：
+已经支持命令对应的功能有：
 ```
-此时，键入用户的id，即可爬取该用户所有已经发布过的视频，爬取下来的视频存储在videos目录下
-
+-upost  该用户已发布的所有视频
+-ulike  该用户喜欢过的所有视频
+-m      是否同时下载该用户的视频和音频（注意，这里必须和-upost 或 -like 同时使用）
+-one    下载单个视频 
+```
 你可以通过以下方式获取用户的id
 
 <p align="center">
@@ -43,7 +44,7 @@ $ 请输入用户的id（11位纯数字）：
 
 用户id就是途中最后一步链接user后的数字，比如此处url为```https://www.douyin.com/share/user/93515402600```，用户id就是```93515402600```
 
-如果你正常运行demo将会得到如下log日志
+如果你正常运行demo， 将会得到类似如下的log日志
 
 ```angular2html
 2018-10-11 20:11:21,039 - douyin_crawl.py[line:147] INFO - download_favorite_video 正在下载视频 Gaiamount_93515402600_#8k #hdr 论现场灯光的重要性～ 
@@ -51,3 +52,13 @@ $ 请输入用户的id（11位纯数字）：
 2018-10-11 20:11:34,690 - douyin_crawl.py[line:147] INFO - download_favorite_video 正在下载视频 Gaiamount_93515402600_#8k #hdr 关于现场的那些事儿 
 2018-10-11 20:11:40,793 - douyin_crawl.py[line:147] INFO - download_favorite_video 正在下载视频 Gaiamount_93515402600_#8k#HDR 中国首部8K HDR 影片！敬请期待～ 
 ``` 
+
+### TODO LIST
+
+- [X]下载该用户所有视频
+
+- [X]下载该用户所有视频和音频
+
+- [X]下载单个视频
+
+- [ ]下载单个视频的音频
