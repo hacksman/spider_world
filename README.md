@@ -40,14 +40,14 @@ $ python video_download_run.py -upost 93515402600
 $ python video_download_run.py -m -upost 93515402600
 
 # 下载用户id为(93515402600) 所有喜欢过的视频
-$ python video_download_run.py ulike 93515402600
+$ python video_download_run.py -ulike 93515402600
 
 # 下载视频id为(6610679501925911815) 的视频
 $ python video_download_run.py -one 6610679501925911815
 
 ```
 
-你可以通过以下方式获取用户id
+__你可以通过以下方式获取用户id__
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_step_1.jpeg" width="140">
@@ -60,7 +60,7 @@ $ python video_download_run.py -one 6610679501925911815
 
 用户id就是图中最后一步链接user后的数字，比如此处url为```https://www.douyin.com/share/user/93515402600```，用户id就是```93515402600```
 
-你可以通过以下方式获取视频id
+__你可以通过以下方式获取视频id__
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_video_id_1.jpeg" width="140">
