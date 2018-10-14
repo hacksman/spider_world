@@ -35,6 +35,7 @@ class DouyinCrawl(object):
     __VIDEO_DETAIL_URL          = "https://aweme.snssdk.com/aweme/v1/aweme/detail/"
     __FAVORITE_URL              = "https://aweme.snssdk.com/aweme/v1/aweme/favorite/"
     __POST_URL                  = "https://aweme.snssdk.com/aweme/v1/aweme/post/"
+    __MUSIC_URL                 = "https://p3.pstatp.com/obj/"
     # __FOLLOW_USER_URL           = "https://aweme.snssdk.com/aweme/v1/commit/follow/user/"
 
     # params
@@ -115,16 +116,21 @@ class DouyinCrawl(object):
         #         has_more, max_cursor = self.grab_user_video(per_person, max_cursor)
         #     break
 
-    def grab_video_main(self, user_id, user_type):
+    def grab_user_media(self, user_id, action, content=None):
+
+        if not re.findall('^\d{11}$', user_id):
+            self.logger.info("请输入正确的用户id， 用户id为11位纯数字...")
+            return
+
         count = 1
         self.logger.info("当前正在爬取 user id 为 {} 的第 👉 {} 👈 页内容...".format(user_id ,count))
-        hasmore, max_cursor = self.grab_video(user_id, user_type)
+        hasmore, max_cursor = self.grab_video(user_id, action, content)
         while hasmore:
             count += 1
             self.logger.info("当前正在爬取 user id 为 {} 的第 👉 {} 👈 页内容...".format(user_id, count))
-            hasmore, max_cursor = self.grab_video(user_id, user_type, max_cursor)
+            hasmore, max_cursor = self.grab_video(user_id, action, content, max_cursor)
 
-    def grab_video(self, user_id, user_type, max_cursor=0):
+    def grab_video(self, user_id, action, content, max_cursor=0):
         favorite_params = self.__USER_VIDEO_PARAMS
         favorite_params['user_id'] = user_id
         favorite_params['max_cursor'] = max_cursor
@@ -133,7 +139,7 @@ class DouyinCrawl(object):
         params = {**query_params, **sign}
 
         # 目前支持两种类型爬取，用户喜欢过的，和当前用户所有已发布的视频
-        url = self.__FAVORITE_URL if user_type == "MY_LOVE" else self.__POST_URL
+        url = self.__FAVORITE_URL if action == "USER_LIKE" else self.__POST_URL
         resp = requests.get(url,
                             params=params,
                             verify=False,
@@ -149,10 +155,12 @@ class DouyinCrawl(object):
             author_nick_name = per_video['author'].get("nickname")
             author_uid = per_video['author'].get('uid')
             video_desc = per_video.get('desc')
+            music_id = per_video['music']['play_url'].get('uri') if content == "-m" else None
             download_item = {
                 "author_nick_name": author_nick_name,
                 "video_desc": video_desc,
                 "author_uid": author_uid,
+                "music_id": music_id
             }
             aweme_id = per_video.get("aweme_id")
             self.download_user_video(aweme_id, **download_item)
@@ -162,12 +170,15 @@ class DouyinCrawl(object):
 
     def download_user_video(self, aweme_id, **video_infos):
         video_content = self.download_video(aweme_id)
+        music_id = video_infos.get("music_id")
+        music_content = self.download_music(music_id)
         author_nick_name = video_infos.get("author_nick_name")
         author_uid = video_infos.get("author_uid")
         video_desc = video_infos.get("video_desc")
         video_name = "_".join([author_nick_name, author_uid, video_desc])
 
-        self.logger.info("download_favorite_video 正在下载视频 {} ".format(video_name))
+        music_log_info = "和音频" if music_content else ""
+        self.logger.info("download_favorite_video 正在下载视频{} {} ".format(music_log_info, video_name))
 
         if not video_content:
             self.logger.warn("你正在下载的视频，由于某种神秘力量的作用，已经凉凉了，请跳过...")
@@ -179,6 +190,24 @@ class DouyinCrawl(object):
 
         with open("{}/videos/{}/{}.mp4".format(file_path_grandfather, author_nick_name, video_name), 'wb') as f:
             f.write(video_content)
+
+        # 若存在音乐内容，则进行下载
+        if music_content:
+            with open("{}/videos/{}/{}.mp3".format(file_path_grandfather, author_nick_name, video_name), 'wb') as f:
+                f.write(music_content)
+
+    def download_music(self, music_id):
+
+        if not music_id:
+            return
+
+        url = self.__MUSIC_URL + music_id
+
+        resp = requests.get(url, headers=self.__HEADERS, verify=False)
+
+        music_content = resp.content
+
+        return music_content
 
     def download_video(self, aweme_id):
         query_params = self.common_params
@@ -197,6 +226,7 @@ class DouyinCrawl(object):
                             verify=False,
                             headers=self.__HEADERS)
         resp_result = resp.json()
+        # print(resp_result)
         play_addr_raw = resp_result['aweme_detail']['video']['play_addr']['url_list']
         play_addr = play_addr_raw[0]
         content = requests.get(play_addr).content
@@ -220,8 +250,10 @@ class DouyinCrawl(object):
 if __name__ == '__main__':
     douyin = DouyinCrawl()
     input = input("请输入用户的id（11位纯数字）：")
-    user_id = '98524853984'
+    user_id = '66868834857'
     if not re.findall('^\d{11}$', input):
         print("请输入正确的用户id， 用户id为11位纯数字")
     else:
-        douyin.grab_video(input, "USER_POST")
+        douyin.grab_user_media(input, "USER_POST")
+
+    douyin.grab_user_media(user_id, action="USER_POST")
