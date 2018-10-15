@@ -25,3 +25,4 @@ six==1.11.0
 Twisted==18.7.0
 w3lib==1.19.0
 zope.interface==4.5.0
+backports.csv==1.0.6

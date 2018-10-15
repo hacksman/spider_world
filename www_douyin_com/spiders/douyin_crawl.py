@@ -1,6 +1,8 @@
 #!/usr/bin/env python 
 # coding:utf-8
 # @Time :10/5/18 15:48
+from backports import csv
+import io
 
 import requests
 import urllib3
@@ -8,6 +10,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 import time
 import json
+import copy
 import re
 import os
 import sys
@@ -35,6 +38,7 @@ class DouyinCrawl(object):
     __VIDEO_DETAIL_URL          = "https://aweme.snssdk.com/aweme/v1/aweme/detail/"
     __FAVORITE_URL              = "https://aweme.snssdk.com/aweme/v1/aweme/favorite/"
     __POST_URL                  = "https://aweme.snssdk.com/aweme/v1/aweme/post/"
+    __COMMENT_URL               = "https://aweme.snssdk.com/aweme/v1/comment/list/"
     __MUSIC_URL                 = "https://p3.pstatp.com/obj/"
     # __FOLLOW_USER_URL           = "https://aweme.snssdk.com/aweme/v1/commit/follow/user/"
 
@@ -45,6 +49,14 @@ class DouyinCrawl(object):
         "user_id": None,
         "source_type": "2",
         "max_time": int(time.time()),
+    }
+
+    __COMMENT_LIST_PARAMS = {
+        "count": "20",
+        "cursor": "0",
+        "comment_style": '2',
+        "aweme_id": None,
+        "digged_cid": "",
     }
 
     __USER_VIDEO_PARAMS = {
@@ -131,7 +143,7 @@ class DouyinCrawl(object):
             hasmore, max_cursor = self.grab_video(user_id, action, content, max_cursor)
 
     def grab_video(self, user_id, action, content, max_cursor=0):
-        favorite_params = self.__USER_VIDEO_PARAMS
+        favorite_params = copy.deepcopy(self.__USER_VIDEO_PARAMS)
         favorite_params['user_id'] = user_id
         favorite_params['max_cursor'] = max_cursor
         query_params = {**favorite_params, **self.common_params}
@@ -167,6 +179,67 @@ class DouyinCrawl(object):
             time.sleep(5)
 
         return hasmore, max_cursor
+
+    def grab_comment_main(self, aweme_id, upvote_bound=1):
+        has_more = self.__grab_comment(aweme_id, upvote_bound)
+        cursor = -20
+        while True:
+            cursor += 20
+            if has_more == -2:
+                self.logger.info("已经到达采集设定的最低点赞数，停止采集...")
+                break
+            if has_more == 0:
+                self.logger.info("没有更多的评论内容，停止采集...")
+                break
+            has_more = self.__grab_comment(aweme_id, cursor, upvote_bound)
+
+    def __grab_comment(self, aweme_id, cursor, upvote_bound=10):
+        comment_params = copy.deepcopy(self.__COMMENT_LIST_PARAMS)
+        comment_params['aweme_id'] = aweme_id
+        comment_params['cursor'] = cursor
+        query_params = {**comment_params, **self.common_params}
+        sign = getSign(self.__get_token(), query_params)
+        params = {**query_params, **sign}
+        resp = requests.get(self.__COMMENT_URL,
+                            params=params,
+                            verify=False,
+                            headers=self.__HEADERS)
+        comment_content = resp.json()
+
+        comments = comment_content.get("comments")
+
+        for per_comment in comments:
+            is_reply = per_comment.get("reply_comment")
+            if is_reply:
+                upvote_count = is_reply[0].get("digg_count")
+                comment_info = {
+                    "text": is_reply[0].get("text"),
+                    "upvote_count": upvote_count,
+                    "nick_name": is_reply[0]['user'].get("nickname"),
+                    "user_id": is_reply[0]['user'].get("uid"),
+
+                }
+            else:
+                upvote_count = per_comment.get("digg_count")
+                comment_info = {
+                    "text": per_comment.get("text"),
+                    "upvote_count": upvote_count,
+                    "nick_name": per_comment['user'].get("nickname"),
+                    "user_id": per_comment['user'].get("uid"),
+                }
+
+            print(upvote_count)
+
+            if int(upvote_count) < upvote_bound:
+                return -2
+
+            self.download_comment(aweme_id, **comment_info)
+
+        # print(text,upvote_count,nick_name,user_id)
+
+        hasmore = int(comment_content.get("hasmore"))
+
+        return hasmore
 
     def download_user_video(self, aweme_id, **video_infos):
         video_content = self.download_video(aweme_id)
@@ -246,14 +319,31 @@ class DouyinCrawl(object):
         with open("{}/videos/{}/{}.mp4".format(file_path_grandfather, author_nick_name, video_name), 'wb') as f:
             f.write(video_content)
 
+    def download_comment(self, aweme_id, **comment_info):
+        comment_sort = [0, 0, 0, 0]
+        print(comment_info)
+        for k, v in comment_info.items():
+            if k == "user_id":
+                comment_sort[0] = v
+            elif k == "nick_name":
+                comment_sort[1] = v
+            elif k == "upvote_count":
+                comment_sort[2] = v
+            else:
+                comment_sort[3] = v
+        with io.open("{}.csv".format(aweme_id), "a+", encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow(comment_sort)
+
 
 if __name__ == '__main__':
     douyin = DouyinCrawl()
-    input = input("请输入用户的id（11位纯数字）：")
-    user_id = '66868834857'
-    if not re.findall('^\d{11}$', input):
-        print("请输入正确的用户id， 用户id为11位纯数字")
-    else:
-        douyin.grab_user_media(input, "USER_POST")
-
-    douyin.grab_user_media(user_id, action="USER_POST")
+    # input = input("请输入用户的id（11位纯数字）：")
+    # user_id = '66868834857'
+    # if not re.findall('^\d{11}$', input):
+    #     print("请输入正确的用户id， 用户id为11位纯数字")
+    # else:
+    #     douyin.grab_user_media(input, "USER_POST")
+    #
+    # douyin.grab_user_media(user_id, action="USER_POST")
+    douyin.grab_comment_main("6612426489541430541")
