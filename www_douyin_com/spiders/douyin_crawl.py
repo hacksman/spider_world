@@ -23,6 +23,7 @@ file_path_now = os.path.abspath(__file__)
 
 from www_douyin_com.common.utils import *
 from www_douyin_com.common.log_handler import getLogger
+from www_douyin_com.spiders.douyin_login import DouyinLogin
 
 
 class DouyinCrawl(object):
@@ -41,6 +42,9 @@ class DouyinCrawl(object):
     __COMMENT_URL               = "https://aweme.snssdk.com/aweme/v1/comment/list/"
     __MUSIC_URL                 = "https://p3.pstatp.com/obj/"
     # __FOLLOW_USER_URL           = "https://aweme.snssdk.com/aweme/v1/commit/follow/user/"
+
+    # login url
+    __LIKE_VIDEO                = "https://aweme.snssdk.com/aweme/v1/commit/item/digg/"
 
     # params
     __FOLLOW_LIST_PARAMS = {
@@ -72,12 +76,14 @@ class DouyinCrawl(object):
     # common
     __MAX_TOKEN_VALIDITY = 60 * 50
 
-    def __init__(self):
+    def __init__(self, phone=None):
         self.common_params = common_params()
 
         self.__token_last_time = int(time.time())
 
         self.__token = None
+
+        self.__request = self.__init__session(phone) if phone else None
 
     def __get_token(self):
         current_time = int(time.time())
@@ -104,29 +110,11 @@ class DouyinCrawl(object):
         sign = getSign(token, params)
         return sign
 
-    def grab_follow_list(self, user_id, offset=0):
-        follow_params = self.__FOLLOW_LIST_PARAMS
-        follow_params['user_id'] = user_id
-        follow_params['offset'] = offset
-        query_params = {**follow_params, **self.common_params}
-        sign = getSign(self.__get_token(), query_params)
-        params = {**query_params, **sign}
-        resp = requests.get(self.__FOLLOW_URL,
-                            params=params,
-                            verify=False,
-                            headers=self.__HEADERS)
-
-        # 获取所有偏置数
-        # total_offset_page = json.loads(resp.text).get("total") // 20
-
-        # 提取每个人的视频
-        persons = resp.json().get('followings')
-
-        # for per_person in persons:
-        #     has_more, max_cursor = self.grab_user_video(per_person)
-        #     while has_more:
-        #         has_more, max_cursor = self.grab_user_video(per_person, max_cursor)
-        #     break
+    def __init__session(self, phone):
+        if not phone:
+            self.logger.info("请输入手机号码以登录账户!!!")
+            return
+        return DouyinLogin().login(phone)
 
     def grab_user_media(self, user_id, action, content=None):
 
@@ -335,9 +323,34 @@ class DouyinCrawl(object):
             writer = csv.writer(f)
             writer.writerow(comment_sort)
 
+    def like_video(self, aweme_id):
+        query_params = {**{"pass-region": "1"}, **self.common_params}
+        sign = getSign(self.__get_token(), query_params)
+        params = {**query_params, **sign}
+
+        form_params = {
+            "aweme_id": aweme_id,
+            "type": 1
+        }
+
+        headers = copy.deepcopy(self.__HEADERS)
+        headers["sdk-version"] = '1'
+        headers["Accept-Encoding"] = 'br, gzip, deflate'
+
+        result = self.__request.post(self.__LIKE_VIDEO,
+                                     params=params,
+                                     data=form_params,
+                                     verify=False,
+                                     headers=headers)
+
+        print(result.json())
+
+        if result.json().get("status_code") == "0":
+            self.logger.info("喜欢成功...")
+
 
 if __name__ == '__main__':
-    douyin = DouyinCrawl()
+    douyin = DouyinCrawl("122")
     # input = input("请输入用户的id（11位纯数字）：")
     # user_id = '66868834857'
     # if not re.findall('^\d{11}$', input):
@@ -346,4 +359,7 @@ if __name__ == '__main__':
     #     douyin.grab_user_media(input, "USER_POST")
     #
     # douyin.grab_user_media(user_id, action="USER_POST")
-    douyin.grab_comment_main("6612426489541430541")
+    aweme_id = "6612876887381249287"
+    # douyin.grab_comment_main("6612426489541430541")
+
+    douyin.like_video(aweme_id)
