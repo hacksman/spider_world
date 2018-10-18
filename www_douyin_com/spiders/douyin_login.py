@@ -11,6 +11,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 import time
 import json
+import pickle
 import copy
 import re
 import os
@@ -72,6 +73,14 @@ class DouyinLogin(object):
             input(self.__PHONE_SEND_CODE_MESSAGE["failed"])
             os._exit(0)
 
+    def login_pickle_cookie(self):
+        if not os.path.exists("./cookie_pickle"):
+            self.logger.error("你没有可用的cookie序列，请校验本地已经存在cookie")
+            return
+        with open("./cookie_pickle" , 'rb') as f:
+            request = self.request.cookies.update(pickle.load(f))
+            return request
+
     def __login_input_code(self, code, phone):
         code_params = copy.deepcopy(self.__CODE_PARAMS)
         code_params['mobile'] = mixString("+86" + phone)
@@ -85,7 +94,12 @@ class DouyinLogin(object):
                                 headers=self.__HEADERS)
         if resp.json().get('message') == "success":
             self.logger.info("登录成功...")
+            # 序列化保存cookie至本地
+            with open("cookie_pickle", "wb") as f:
+                pickle.dump(self.request.cookies, f)
             return self.request
+
+
 
     def __get_token(self):
         current_time = int(time.time())
