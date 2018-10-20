@@ -77,9 +77,9 @@ class DouyinLogin(object):
         if not os.path.exists("./cookie_pickle"):
             self.logger.error("你没有可用的cookie序列，请校验本地已经存在cookie")
             return
-        with open("./cookie_pickle" , 'rb') as f:
-            request = self.request.cookies.update(pickle.load(f))
-            return request
+        with open("./cookie_pickle", 'rb') as f:
+            self.request.cookies.update(pickle.load(f))
+            return self.request
 
     def __login_input_code(self, code, phone):
         code_params = copy.deepcopy(self.__CODE_PARAMS)

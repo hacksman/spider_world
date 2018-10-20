@@ -114,7 +114,7 @@ class DouyinCrawl(object):
         if not phone:
             self.logger.info("请输入手机号码以登录账户!!!")
             return
-        return DouyinLogin().login(phone)
+        return DouyinLogin().login_pickle_cookie()
 
     def grab_user_media(self, user_id, action, content=None):
 
@@ -337,20 +337,22 @@ class DouyinCrawl(object):
         headers["sdk-version"] = '1'
         headers["Accept-Encoding"] = 'br, gzip, deflate'
 
+        print(self.__request.cookies)
+
         result = self.__request.post(self.__LIKE_VIDEO,
-                                     params=params,
-                                     data=form_params,
-                                     verify=False,
-                                     headers=headers)
+        #                              params=params,
+        #                              data=form_params,
+        #                              verify=False,
+        #                              headers=headers)
 
-        print(result.json())
+        # print(result.json())
 
-        if result.json().get("status_code") == "0":
-            self.logger.info("喜欢成功...")
+        # if result.json().get("status_code") == "0":
+        #     self.logger.info("喜欢成功...")
 
 
 if __name__ == '__main__':
-    douyin = DouyinCrawl("122")
+    douyin = DouyinCrawl("123")
     # input = input("请输入用户的id（11位纯数字）：")
     # user_id = '66868834857'
     # if not re.findall('^\d{11}$', input):
