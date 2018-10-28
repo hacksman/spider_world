@@ -345,7 +345,7 @@ class DouyinCrawl(object):
                                      verify=False,
                                      headers=headers)
 
-        # print(result.json())
+        print(result.json())
 
         # if result.json().get("status_code") == "0":
         #     self.logger.info("喜欢成功...")
