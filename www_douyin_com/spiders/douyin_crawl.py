@@ -340,10 +340,10 @@ class DouyinCrawl(object):
         print(self.__request.cookies)
 
         result = self.__request.post(self.__LIKE_VIDEO,
-        #                              params=params,
-        #                              data=form_params,
-        #                              verify=False,
-        #                              headers=headers)
+                                     params=params,
+                                     data=form_params,
+                                     verify=False,
+                                     headers=headers)
 
         # print(result.json())
 
