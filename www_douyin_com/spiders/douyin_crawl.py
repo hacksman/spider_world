@@ -118,8 +118,8 @@ class DouyinCrawl(object):
 
     def grab_user_media(self, user_id, action, content=None):
 
-        if not re.findall('^\d{11}$', user_id):
-            self.logger.info("请输入正确的用户id， 用户id为11位纯数字...")
+        if not re.findall('^\d{11}$', user_id) or not re.findall('^\d{12}$', user_id):
+            self.logger.info("请输入正确的用户id， 用户id为11或12位纯数字...")
             return
 
         count = 1
@@ -353,15 +353,7 @@ class DouyinCrawl(object):
 
 if __name__ == '__main__':
     douyin = DouyinCrawl("123")
-    # input = input("请输入用户的id（11位纯数字）：")
-    # user_id = '66868834857'
-    # if not re.findall('^\d{11}$', input):
-    #     print("请输入正确的用户id， 用户id为11位纯数字")
-    # else:
-    #     douyin.grab_user_media(input, "USER_POST")
-    #
-    # douyin.grab_user_media(user_id, action="USER_POST")
+
     aweme_id = "6612876887381249287"
-    # douyin.grab_comment_main("6612426489541430541")
 
     douyin.like_video(aweme_id)
