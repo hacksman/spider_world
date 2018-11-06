@@ -118,7 +118,7 @@ class DouyinCrawl(object):
 
     def grab_user_media(self, user_id, action, content=None):
 
-        if not re.findall('^\d{11}$', user_id) or not re.findall('^\d{12}$', user_id):
+        if not re.findall('^\d{11,12}$', user_id):
             self.logger.info("请输入正确的用户id， 用户id为11或12位纯数字...")
             return
 
