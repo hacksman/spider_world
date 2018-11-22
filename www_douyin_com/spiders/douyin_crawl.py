@@ -116,12 +116,8 @@ class DouyinCrawl(object):
             return
         return DouyinLogin().login_pickle_cookie()
 
+    @check_id
     def grab_user_media(self, user_id, action, content=None):
-
-        if not re.findall('^\d{11,12}$', user_id):
-            self.logger.info("请输入正确的用户id， 用户id为11或12位纯数字...")
-            return
-
         count = 1
         self.logger.info("当前正在爬取 user id 为 {} 的第 👉 {} 👈 页内容...".format(user_id ,count))
         hasmore, max_cursor = self.grab_video(user_id, action, content)
@@ -130,6 +126,7 @@ class DouyinCrawl(object):
             self.logger.info("当前正在爬取 user id 为 {} 的第 👉 {} 👈 页内容...".format(user_id, count))
             hasmore, max_cursor = self.grab_video(user_id, action, content, max_cursor)
 
+    @check_id
     def grab_video(self, user_id, action, content, max_cursor=0):
         favorite_params = copy.deepcopy(self.__USER_VIDEO_PARAMS)
         favorite_params['user_id'] = user_id
@@ -355,5 +352,8 @@ if __name__ == '__main__':
     douyin = DouyinCrawl("123")
 
     aweme_id = "6612876887381249287"
+
+    user_id = "93515402600"
+    douyin.grab_user_media(user_id, "USER_POST")
 
     douyin.like_video(aweme_id)

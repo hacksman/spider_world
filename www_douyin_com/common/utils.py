@@ -92,3 +92,15 @@ def common_params():
         "ac":               "WIFI",
     }
     return item
+
+
+# check douyin id
+import re
+def check_id(func):
+    def wrapper(self, *args, **kwargs):
+        if not re.findall('^\d{10,13}$', args[0]):
+            self.logger.info("请输入正确的用户id， 用户id为10,11,12或13位纯数字...")
+            raise Exception
+        return func(self, *args, **kwargs)
+    return wrapper
+
