@@ -96,7 +96,9 @@ def common_params():
 
 # check douyin id
 import re
+import functools
 def check_id(func):
+    @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
         if not re.findall('^\d{10,13}$', args[0]):
             self.logger.info("请输入正确的用户id， 用户id为10,11,12或13位纯数字...")
