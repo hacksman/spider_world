@@ -25,6 +25,8 @@ from www_douyin_com.common.utils import *
 from www_douyin_com.common.log_handler import getLogger
 from www_douyin_com.spiders.douyin_login import DouyinLogin
 
+from www_douyin_com.common.urls import URL
+
 
 class DouyinCrawl(object):
     logger = getLogger("DouyinCrawl", console_out=True)
@@ -32,19 +34,6 @@ class DouyinCrawl(object):
     # headers
     __HEADERS = {"User-Agent": "Aweme/2.7.0 (iPhone; iOS 11.0; Scale/2.00)"}
     # __HEADERS = {"User-Agent": "Aweme/2.8.0 (iPhone; iOS 12.0; Scale/2.00)"}
-
-    # urls
-    __FOLLOW_URL                = "https://aweme.snssdk.com/aweme/v1/user/following/list/"
-    __USER_VIDEO_URL            = "https://aweme.snssdk.com/aweme/v1/aweme/post/"
-    __VIDEO_DETAIL_URL          = "https://aweme.snssdk.com/aweme/v1/aweme/detail/"
-    __FAVORITE_URL              = "https://aweme.snssdk.com/aweme/v1/aweme/favorite/"
-    __POST_URL                  = "https://aweme.snssdk.com/aweme/v1/aweme/post/"
-    __COMMENT_URL               = "https://aweme.snssdk.com/aweme/v1/comment/list/"
-    __MUSIC_URL                 = "https://p3.pstatp.com/obj/"
-    # __FOLLOW_USER_URL           = "https://aweme.snssdk.com/aweme/v1/commit/follow/user/"
-
-    # login url
-    __LIKE_VIDEO                = "https://aweme.snssdk.com/aweme/v1/commit/item/digg/"
 
     # params
     __FOLLOW_LIST_PARAMS = {
@@ -136,7 +125,7 @@ class DouyinCrawl(object):
         params = {**query_params, **sign}
 
         # 目前支持两种类型爬取，用户喜欢过的，和当前用户所有已发布的视频
-        url = self.__FAVORITE_URL if action == "USER_LIKE" else self.__POST_URL
+        url = URL.favorite_url() if action == "USER_LIKE" else URL.post_url()
         resp = requests.get(url,
                             params=params,
                             verify=False,
@@ -185,7 +174,7 @@ class DouyinCrawl(object):
         query_params = {**comment_params, **self.common_params}
         sign = getSign(self.__get_token(), query_params)
         params = {**query_params, **sign}
-        resp = requests.get(self.__COMMENT_URL,
+        resp = requests.get(URL.comment_url(),
                             params=params,
                             verify=False,
                             headers=self.__HEADERS)
@@ -259,7 +248,7 @@ class DouyinCrawl(object):
         if not music_id:
             return
 
-        url = self.__MUSIC_URL + music_id
+        url = URL.music_url(music_id)
 
         resp = requests.get(url, headers=self.__HEADERS, verify=False)
 
@@ -278,7 +267,7 @@ class DouyinCrawl(object):
             "aweme_id": aweme_id
         }
 
-        resp = requests.get(self.__VIDEO_DETAIL_URL,
+        resp = requests.get(URL.video_detail_url(),
                             params=params,
                             data=post_data,
                             verify=False,
@@ -336,7 +325,7 @@ class DouyinCrawl(object):
 
         print(self.__request.cookies)
 
-        result = self.__request.post(self.__LIKE_VIDEO,
+        result = self.__request.post(URL.like_video_url(),
                                      params=params,
                                      data=form_params,
                                      verify=False,
