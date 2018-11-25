@@ -93,7 +93,7 @@ class DouBanInfoHandler(InfoHandlerBase):
         host_is_personal = HostIsPersonal.YES.value if "个人" in sentence else HostIsPersonal.UNKNOW.value
 
         house_type_room_count, house_type_hall_count = self.__extract_house_type(sentence)
-        house_furniture = AttrExistStatus.YES.value if "家私" in sentence else AttrExistStatus.UNKNOW.value
+        house_furniture = AttrExistStatus.YES.value if any(i in sentence for i in ["家私", "家具", "家电"]) else AttrExistStatus.UNKNOW.value
         house_price_raw = self.__extract_price(sentence)
         house_price = house_price_raw[0] if house_price_raw else None
         house_single_room = AttrExistStatus.YES.value if "单间" in sentence else AttrExistStatus.UNKNOW.value
@@ -102,10 +102,36 @@ class DouBanInfoHandler(InfoHandlerBase):
         house_private_toilet = AttrExistStatus.YES.value if "独卫" in sentence else AttrExistStatus.UNKNOW.value
         house_elevator = self.__extract_elevator(sentence)
 
-        host_need_rent = ""
+        location_subway = self._extract_value(sentence, DoubanRent.subway)
 
-        print(house_bedroom)
-        print(rent_status)
+        use_everytime_available = AttrExistStatus.YES.value if ("拎包" or "随时") in sentence else AttrExistStatus.UNKNOW.value
+        use_pay_deposit, use_pay_payment = self.__extract_payment(sentence)
+        use_roommate = self.__extract_rent_way(sentence)
+        use_long = self._extract_value(sentence, DoubanRent.duration)
+
+        item = {
+            "rent_status": rent_status,
+            "host_need_rent": host_need_rent,
+            "host_claim_sex": host_claim_sex,
+            "host_is_personal": host_is_personal,
+            "house_type_room_count": house_type_room_count,
+            "house_type_hall_count": house_type_hall_count,
+            "house_furniture": house_furniture,
+            "house_price": house_price,
+            "house_single_room": house_single_room,
+            "house_bedroom": house_bedroom,
+            "house_private_toilet": house_private_toilet,
+            "house_elevator": house_elevator,
+            "location_subway": location_subway,
+            "use_everytime_available": use_everytime_available,
+            "use_pay_deposit": use_pay_deposit,
+            "use_pay_payment": use_pay_payment,
+            "use_roommate": use_roommate,
+            "use_long": use_long,
+        }
+
+        print(item)
+
         return house_price
 
     def __extract_price(self, sentence):
@@ -136,13 +162,39 @@ class DouBanInfoHandler(InfoHandlerBase):
 
         return room_count, hall_count
 
+    def __extract_payment(self, sentence):
+
+        __CHINESE_NUM_MAP = {
+            "一": 1,
+            "二": 2,
+            "两": 2,
+            "三": 3,
+        }
+
+        pay_raw = re.compile(".*押(.)付(.)").findall(sentence)
+        pay_deposit = -1
+        pay_payment = -1
+        print(pay_raw)
+        if pay_raw:
+            pay_deposit = __CHINESE_NUM_MAP.get(pay_raw[0][0], -1)
+            pay_payment = __CHINESE_NUM_MAP.get(pay_raw[0][1], -1)
+        return pay_deposit, pay_payment
+
     def __extract_elevator(self, sentence):
         if "电梯" in sentence:
-            return AttrExistStatus.YES
+            return AttrExistStatus.YES.value
         elif "楼梯" in sentence:
-            return AttrExistStatus.NO
+            return AttrExistStatus.NO.value
         else:
-            return AttrExistStatus.UNKNOW
+            return AttrExistStatus.UNKNOW.value
+
+    def __extract_rent_way(self, sentence):
+        if "合租" in sentence:
+            return AttrExistStatus.YES.value
+        elif "整租" in sentence:
+            return AttrExistStatus.NO.value
+        else:
+            return AttrExistStatus.UNKNOW.value
 
 if __name__ == '__main__':
     base = DouBanInfoHandler()
