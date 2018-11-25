@@ -4,7 +4,9 @@
 
 import re
 from www_douban_com.resources.douban_rent import DoubanRent
+from pyhanlp import *
 from www_douban_com.resources.douban_rent_enum import (RentStatus, HostNeedRentStatus, HostIsPersonal, AttrExistStatus)
+
 
 
 class InfoHandlerBase(object):
@@ -102,6 +104,7 @@ class DouBanInfoHandler(InfoHandlerBase):
         house_private_toilet = AttrExistStatus.YES.value if "独卫" in sentence else AttrExistStatus.UNKNOW.value
         house_elevator = self.__extract_elevator(sentence)
 
+        location_nearby = self.__extract_nearby(sentence)
         location_subway = self._extract_value(sentence, DoubanRent.subway)
 
         use_everytime_available = AttrExistStatus.YES.value if ("拎包" or "随时") in sentence else AttrExistStatus.UNKNOW.value
@@ -123,6 +126,7 @@ class DouBanInfoHandler(InfoHandlerBase):
             "house_private_toilet": house_private_toilet,
             "house_elevator": house_elevator,
             "location_subway": location_subway,
+            "location_nearby": location_nearby,
             "use_everytime_available": use_everytime_available,
             "use_pay_deposit": use_pay_deposit,
             "use_pay_payment": use_pay_payment,
@@ -130,9 +134,7 @@ class DouBanInfoHandler(InfoHandlerBase):
             "use_long": use_long,
         }
 
-        print(item)
-
-        return house_price
+        return item
 
     def __extract_price(self, sentence):
         numbers = re.compile('\d+').findall(sentence)
@@ -174,7 +176,6 @@ class DouBanInfoHandler(InfoHandlerBase):
         pay_raw = re.compile(".*押(.)付(.)").findall(sentence)
         pay_deposit = -1
         pay_payment = -1
-        print(pay_raw)
         if pay_raw:
             pay_deposit = __CHINESE_NUM_MAP.get(pay_raw[0][0], -1)
             pay_payment = __CHINESE_NUM_MAP.get(pay_raw[0][1], -1)
@@ -195,6 +196,17 @@ class DouBanInfoHandler(InfoHandlerBase):
             return AttrExistStatus.NO.value
         else:
             return AttrExistStatus.UNKNOW.value
+
+    def __extract_nearby(self, sentence):
+        CRFLexicalAnalyzer = JClass("com.hankcs.hanlp.model.crf.CRFLexicalAnalyzer")
+        analyzer = CRFLexicalAnalyzer()
+        loc = []
+        words = analyzer.analyze(sentence).findWordsByLabel("ns").toArray()
+        if words:
+            loc = [i.value for i in words]
+        return loc
+
+
 
 if __name__ == '__main__':
     base = DouBanInfoHandler()

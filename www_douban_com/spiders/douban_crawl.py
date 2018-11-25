@@ -23,9 +23,16 @@ from configs.mongo_config import LocalMongoConfig
 from common.mongo import MongDb
 from www_douban_com.handler import DouBanInfoHandler
 
-
-
 logger = AppLogger('douban.log').get_logger()
+
+
+init_urls = [
+            "https://www.douban.com/group/luohuzufang/discussion?start={}",
+            "https://www.douban.com/group/380931/discussion?start={}",
+            "https://www.douban.com/group/lhzf/discussion?start={}",
+            "https://www.douban.com/group/591875/discussion?start={}",
+            "https://www.douban.com/group/607247/discussion?start={}"
+             ]
 
 
 class DoubanCrawl(object):
@@ -63,8 +70,9 @@ class DoubanCrawl(object):
         self.request.headers = headers
         return self.request
 
-    def __get_page_data(self, page_num=0):
-        resp = self.request.get(self.__START_URL.format(page_num))
+    def __get_page_data(self, page_num=0, start_url=None):
+        url = start_url.format(page_num) if start_url else self.__START_URL.format(page_num)
+        resp = self.request.get(url)
         if resp is None:
             self.log.error("请求列表页出错...")
             return -1
@@ -85,11 +93,7 @@ class DoubanCrawl(object):
             comment_date = per_discussion.xpath('./td[4]/text()')[0]
             # titles.append(title)
 
-            print(title)
-
-            price = self.douban_handler.clean_data(title)
-
-            print(price)
+            extract_info = self.douban_handler.clean_data(title)
 
             item = {
                 "title": title,
@@ -99,23 +103,28 @@ class DoubanCrawl(object):
                 "comment_count": comment_count,
                 "comment_date": comment_date,
             }
-            item_list.append(item)
-        # self.mongo.insert_batch_data(self.table, item_list, key="detail_url")
+
+            new_item = {**extract_info, **item}
+            # print(new_item)
+            item_list.append(new_item)
+        self.mongo.insert_batch_data(self.table, item_list, key="detail_url")
 
     def start(self, *args, **kwargs):
-        for i in tqdm(range(0, self.__page + 1)):
-            self.log.info("当前即将采集第 {} 页".format(i + 1))
-            grab_list_page_status = self.__get_page_data(i * 25)
-            if grab_list_page_status == -1:
-                self.log.info("当前采集列表页出错, 当前页面是第 {} 页".format(i + 1))
-                continue
-            self.log.info("当前页面采集完成: page = {}".format(i + 1))
+        for url in init_urls:
+            self.log.info("当前采集小组的链接是:{}".format(url))
+            for i in tqdm(range(0, self.__page + 1)):
+                self.log.info("当前即将采集第 {} 页".format(i))
+                grab_list_page_status = self.__get_page_data(i * 25, url)
+                if grab_list_page_status == -1:
+                    self.log.info("当前采集列表页出错, 当前页面是第 {} 页".format(i))
+                    continue
+                self.log.info("当前页面采集完成: page = {}".format(i))
         self.log.info("成功退出采集程序...")
 
 
 @click.command()
 @click.option('--page',
-              default=3,
+              default=20,
               type=int,
               help=u'采集总页数')
 def main(page):
