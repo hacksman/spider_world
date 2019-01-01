@@ -89,7 +89,7 @@ class DouBanInfoHandler(InfoHandlerBase):
     def clean_data(self, sentence):
         rent_status = RentStatus.DOWNLINE.value if self._is_value_exist(sentence, DoubanRent.rent_status) else RentStatus.ONLINE.value
 
-        host_need_rent = HostNeedRentStatus.YES.value if "求租" in sentence else HostNeedRentStatus.UNKNOW.value
+        host_need_rent = HostNeedRentStatus.YES.value if "求" in sentence else HostNeedRentStatus.UNKNOW.value
         host_claim_sex_raw = self._extract_value(sentence, DoubanRent.sex, amount=1)
         host_claim_sex = host_claim_sex_raw[0] if host_claim_sex_raw else None
         host_is_personal = HostIsPersonal.YES.value if "个人" in sentence else HostIsPersonal.UNKNOW.value
@@ -149,18 +149,18 @@ class DouBanInfoHandler(InfoHandlerBase):
             "两": 2,
             "三": 3,
             "四": 4,
-            "未知": -1,
+            "未知": 0,
         }
 
         room_count_raw = re.compile(".*(.)[室|房]").findall(sentence)
-        room_count = -1
+        room_count = 0
         if room_count_raw:
-            room_count = __CHINESE_NUM_MAP.get(room_count_raw[0], -1)
+            room_count = __CHINESE_NUM_MAP.get(room_count_raw[0], 0)
 
         hall_count_raw = re.compile(".*(.)[厅]").findall(sentence)
-        hall_count = -1
+        hall_count = 0
         if hall_count_raw:
-            hall_count = __CHINESE_NUM_MAP.get(hall_count_raw[0], -1)
+            hall_count = __CHINESE_NUM_MAP.get(hall_count_raw[0], 0)
 
         return room_count, hall_count
 
@@ -174,11 +174,11 @@ class DouBanInfoHandler(InfoHandlerBase):
         }
 
         pay_raw = re.compile(".*押(.)付(.)").findall(sentence)
-        pay_deposit = -1
-        pay_payment = -1
+        pay_deposit = 0
+        pay_payment = 0
         if pay_raw:
-            pay_deposit = __CHINESE_NUM_MAP.get(pay_raw[0][0], -1)
-            pay_payment = __CHINESE_NUM_MAP.get(pay_raw[0][1], -1)
+            pay_deposit = __CHINESE_NUM_MAP.get(pay_raw[0][0], 0)
+            pay_payment = __CHINESE_NUM_MAP.get(pay_raw[0][1], 0)
         return pay_deposit, pay_payment
 
     def __extract_elevator(self, sentence):
@@ -197,11 +197,12 @@ class DouBanInfoHandler(InfoHandlerBase):
         else:
             return AttrExistStatus.UNKNOW.value
 
-    def __extract_nearby(self, sentence):
+    def extract_nearby(self, sentence):
         CRFLexicalAnalyzer = JClass("com.hankcs.hanlp.model.crf.CRFLexicalAnalyzer")
         analyzer = CRFLexicalAnalyzer()
         loc = []
         words = analyzer.analyze(sentence).findWordsByLabel("ns").toArray()
+        print(words)
         if words:
             loc = [i.value for i in words]
         return loc
@@ -210,7 +211,8 @@ class DouBanInfoHandler(InfoHandlerBase):
 
 if __name__ == '__main__':
     base = DouBanInfoHandler()
-    print(base.clean_data("【罗湖】太安站 两室一厅一厨一卫 主卧出租 1000元／月 限女"))
+    # print(base.clean_data("【罗湖】太安站 两室一厅一厨一卫 主卧出租 1000元／月 限女"))
+    print(base.extract_nearby("【罗湖】太安站 两室一厅一厨一卫 主卧出租 1000元／月 限女"))
     # print(d.clean_data('nifrfrfrjiji 反日法人 2299'))
 
     # info_handler = InfoHandlerBase()

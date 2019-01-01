@@ -26,3 +26,9 @@ Twisted==18.7.0
 w3lib==1.19.0
 zope.interface==4.5.0
 backports.csv==1.0.6
+pymongo==3.7.2
+tqdm==4.28.1
+lxml==4.2.5
+click==7.0
+requests==2.21.0
+pyhanlp==0.1.44

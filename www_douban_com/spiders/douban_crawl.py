@@ -5,6 +5,7 @@
 
 import json
 import sys
+import time
 
 import click
 
@@ -27,11 +28,12 @@ logger = AppLogger('douban.log').get_logger()
 
 
 init_urls = [
-            "https://www.douban.com/group/luohuzufang/discussion?start={}",
-            "https://www.douban.com/group/380931/discussion?start={}",
-            "https://www.douban.com/group/lhzf/discussion?start={}",
-            "https://www.douban.com/group/591875/discussion?start={}",
-            "https://www.douban.com/group/607247/discussion?start={}"
+            "https://www.douban.com/group/nanshanzufang/discussion?start={}",
+            "https://www.douban.com/group/498004/discussion?start={}",
+            "https://www.douban.com/group/106955/discussion?start={}",
+            "https://www.douban.com/group/szsh/discussion?start={}",
+            "https://www.douban.com/group/551176/discussion?start={}",
+            "https://www.douban.com/group/SZhouse/discussion?start={}"
              ]
 
 
@@ -90,7 +92,9 @@ class DoubanCrawl(object):
             author_url = per_discussion.xpath('./td[2]/a/@href')[0]
             comment_count_raw = per_discussion.xpath('./td[3]/text()')
             comment_count = comment_count_raw[0] if comment_count_raw else 0
-            comment_date = per_discussion.xpath('./td[4]/text()')[0]
+            comment_date_raw = str(per_discussion.xpath('./td[4]/text()')[0])
+            comment_date = "2018-" + comment_date_raw if not comment_date_raw.startswith("20") else comment_date_raw
+
             # titles.append(title)
 
             extract_info = self.douban_handler.clean_data(title)
@@ -102,6 +106,7 @@ class DoubanCrawl(object):
                 "author_url": author_url,
                 "comment_count": comment_count,
                 "comment_date": comment_date,
+                "_in_time": time.strftime("%")
             }
 
             new_item = {**extract_info, **item}
