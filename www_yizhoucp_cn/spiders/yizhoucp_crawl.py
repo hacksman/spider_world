@@ -100,6 +100,7 @@ class YizhoucpCrawl(object):
                 nick_name = post_data["user"].get("nickname")
                 post_text = post_data["payload"].get("text")
                 self.log.info("给用户({})发布的【{}】点赞成功".format(nick_name, post_text))
+                return True
 
     def start(self, *args, **kwargs):
         count = 0
@@ -112,9 +113,8 @@ class YizhoucpCrawl(object):
                 if like_succeed:
                     like_count += 1
                 time.sleep(random.randint(1, 2))
-
-            if like_count % 100 == 0:
-                self.log.info("当前已经对 {} 位小姐姐点过赞了...".format(like_count))
+                if like_count % 100 == 0:
+                    self.log.info("当前已经对 {} 位小姐姐点过赞了...".format(like_count))
             self.log.info("当前已经遍历了第 {} 次动态".format(count))
             time.sleep(random.randint(60, 100))
 
