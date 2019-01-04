@@ -16,6 +16,9 @@ sys.path.append("../../..")
 from common.logger import AppLogger
 from www_yizhoucp_cn.resource.crack import crack_sign
 
+from common.mongo import MongDb
+from configs.mongo_config import LocalMongoConfig
+
 import requests
 import time
 
@@ -34,6 +37,14 @@ class YizhoucpCrawl(object):
         self.user_id = user_id
         self.token = token
         self.request = self.__init_reqeust()
+        self.cp_mongo = MongDb(LocalMongoConfig.HOST,
+                               LocalMongoConfig.PORT,
+                               LocalMongoConfig.DB,
+                               LocalMongoConfig.USER,
+                               LocalMongoConfig.PASSWD,
+                               log=self.log)
+
+        self.cp_table = "yizhou_cp"
 
     def __init_reqeust(self):
         headers = {
@@ -77,13 +88,21 @@ class YizhoucpCrawl(object):
         if exclude_cp and is_cp:
             self.log.info("过滤掉cp组")
             return False
+        category = post_data.get("category")
+        if category == "topic":
+            self.log.info("过滤掉话题..")
+            return False
 
         fid = post_data.get("fid")
-        try:
-            raw_sex = post_data["user"].get('sex')
-        except KeyError as e:
-            self.log.warn("获取性别失败")
+        nick_name = post_data["user"].get("nickname")
+        post_text = post_data["payload"].get("text")
+
+        mongo_exists = self.__update_like_mongo(fid, nick_name, post_text)
+        if mongo_exists == -1:
+            self.log.info("之前已对这条数据点过赞了，跳过...")
             return False
+
+        raw_sex = post_data["user"].get('sex')
 
         if raw_sex == sex:
             fid_params = {
@@ -117,6 +136,24 @@ class YizhoucpCrawl(object):
                     self.log.info("当前已经对 {} 位小姐姐点过赞了...".format(like_count))
             self.log.info("当前已经遍历了第 {} 次动态".format(count))
             time.sleep(random.randint(60, 100))
+
+    def __update_like_mongo(self, fid, nick_name, post_text):
+        exist_data = self.cp_mongo.find_one(self.cp_table, {"_id": fid})
+        if exist_data:
+            self.log.info(">>>找到相同的数据啦...")
+            count = exist_data['count']
+            count += 1
+            exist_data.update({"count": count})
+            self.cp_mongo.insert_batch_data(self.cp_table, [exist_data])
+            return -1
+        new_data = {
+            "_id": fid,
+            "nick_name": nick_name,
+            "post_text": post_text,
+            "count": 1
+        }
+        self.cp_mongo.insert_batch_data(self.cp_table, [new_data], insert=True)
+        return 1
 
 @click.command()
 @click.option('--secrite_key',
