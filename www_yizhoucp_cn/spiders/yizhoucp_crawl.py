@@ -127,15 +127,17 @@ class YizhoucpCrawl(object):
         while True:
             count += 1
             moment_data = self.get_moment_list()
+            like_count_batch = 0
             for per_post in moment_data["data"]["list"]:
                 like_succeed = self.like_sex(per_post)
                 if like_succeed:
+                    like_count_batch += 1
                     like_count += 1
                 time.sleep(random.randint(1, 2))
                 if like_count % 100 == 0:
                     self.log.info("当前已经对 {} 位小姐姐点过赞了...".format(like_count))
             self.log.info("当前已经遍历了第 {} 次动态".format(count))
-            time.sleep(random.randint(60, 100))
+            time.sleep(random.randint(10*like_count_batch, 15*like_count_batch))
 
     def __update_like_mongo(self, fid, nick_name, post_text):
         exist_data = self.cp_mongo.find_one(self.cp_table, {"_id": fid})
