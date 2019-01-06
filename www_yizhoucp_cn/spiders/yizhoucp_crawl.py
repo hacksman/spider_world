@@ -8,6 +8,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 import click
 import random
+import datetime
 
 sys.path.append("..")
 sys.path.append("../..")
@@ -137,7 +138,10 @@ class YizhoucpCrawl(object):
                 if like_count % 100 == 0:
                     self.log.info("当前已经对 {} 位小姐姐点过赞了...".format(like_count))
             self.log.info("当前已经遍历了第 {} 次动态".format(count))
-            time.sleep(random.randint(10*like_count_batch, 15*like_count_batch))
+            time.sleep(random.randint(5*like_count_batch, 7*like_count_batch))
+            now = datetime.datetime.now()
+            if now.hour in range(2, 6):
+                time.sleep(random.randint(3600, 4000))
 
     def __update_like_mongo(self, fid, nick_name, post_text):
         exist_data = self.cp_mongo.find_one(self.cp_table, {"_id": fid})
