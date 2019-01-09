@@ -18,7 +18,7 @@ import click
               help=u'用户id')
 def main(secrite_key, token, user_id):
     log = AppLogger("yizhou_cp.log").get_logger()
-    YizhoucpCrawl(secrite_key, token, user_id, log=log)
+    YizhoucpCrawl(secrite_key, token, user_id, log=log).start()
 
 if __name__ == '__main__':
     main()
