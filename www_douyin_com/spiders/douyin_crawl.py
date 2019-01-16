@@ -274,9 +274,14 @@ class DouyinCrawl(object):
                             headers=self.__HEADERS)
         resp_result = resp.json()
         # print(resp_result)
-        play_addr_raw = resp_result['aweme_detail']['video']['play_addr']['url_list']
-        play_addr = play_addr_raw[0]
-        content = requests.get(play_addr).content
+        try:
+            play_addr_raw = resp_result['aweme_detail']['video']['play_addr']['url_list']
+            play_addr = play_addr_raw[0]
+            content = requests.get(play_addr).content
+        except:
+            self.logger.warning("提取视频信息失败...")
+            content = None
+
         return content
 
     def download_one_video(self, aweme_id):
@@ -290,8 +295,9 @@ class DouyinCrawl(object):
         if not os.path.exists("{}/videos/{}".format(file_path_grandfather, author_nick_name)):
             os.makedirs("{}/videos/{}".format(file_path_grandfather, author_nick_name))
         video_content = self.download_video(aweme_id)
-        with open("{}/videos/{}/{}.mp4".format(file_path_grandfather, author_nick_name, video_name), 'wb') as f:
-            f.write(video_content)
+        if video_content:
+            with open("{}/videos/{}/{}.mp4".format(file_path_grandfather, author_nick_name, video_name), 'wb') as f:
+                f.write(video_content)
 
     def download_comment(self, aweme_id, **comment_info):
         comment_sort = [0, 0, 0, 0]
@@ -342,7 +348,7 @@ if __name__ == '__main__':
 
     aweme_id = "6612876887381249287"
 
-    user_id = "93515402600"
+    user_id = "73763378004"
     douyin.grab_user_media(user_id, "USER_POST")
 
     douyin.like_video(aweme_id)
