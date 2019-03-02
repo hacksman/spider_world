@@ -34,9 +34,9 @@ class YizhoucpCrawl(object):
 
     __HOST = "api.myrightone.com"
 
-    def __init__(self, secrite_key, token, user_id, check_code, log):
+    def __init__(self, secret_key, token, user_id, check_code, log):
         self.log = log
-        self.secrite_key = secrite_key
+        self.secret_key = secret_key
         self.user_id = user_id
         self.token = token
         self.check_code = check_code
@@ -66,7 +66,7 @@ class YizhoucpCrawl(object):
         return self.request
 
     def __get_sign(self, params):
-        req = requests.get(self.__CRACK_SIGN_URL, params={"secret_key": self.secrite_key,
+        req = requests.get(self.__CRACK_SIGN_URL, params={"secret_key": self.secret_key,
                                                           "check_code": self.check_code,
                                                           "params": json.dumps(params)})
         req_json = req.json()
@@ -130,6 +130,8 @@ class YizhoucpCrawl(object):
                 "user_id": self.user_id,
             }
             sign = self.__get_sign(fid_params)
+            if not sign:
+                return False
             fid_params["sign"] = sign
             resp = self.request.get(self.__LIKE_PID_URL, params=fid_params, verify=False)
             resp_json = resp.json()
@@ -155,7 +157,7 @@ class YizhoucpCrawl(object):
                 if like_count % 100 == 0:
                     self.log.info("当前已经对 {} 位小姐姐点过赞了...".format(like_count))
             self.log.info("当前已经遍历了第 {} 次动态".format(count))
-            time.sleep(random.randint(5*like_count_batch, 7*like_count_batch))
+            time.sleep(random.randint(7*like_count_batch, 10*like_count_batch))
             now = datetime.datetime.now()
             if now.hour in range(2, 6):
                 time.sleep(random.randint(3600, 4000))
@@ -182,7 +184,7 @@ class YizhoucpCrawl(object):
 @click.command()
 @click.option('--secrite_key',
               type=str,
-              help=u'secrite_key')
+              help=u'secret_key')
 @click.option('--token',
               type=str,
               help=u'token')
@@ -192,9 +194,9 @@ class YizhoucpCrawl(object):
 @click.option('--check_code',
               type=str,
               help=u'check_code')
-def main(secrite_key, token, user_id, check_code):
+def main(secret_key, token, user_id, check_code):
     try:
-        YizhoucpCrawl(secrite_key,
+        YizhoucpCrawl(secret_key,
                       token,
                       user_id,
                       check_code,
