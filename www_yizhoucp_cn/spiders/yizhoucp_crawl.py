@@ -6,22 +6,22 @@ import sys
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-import click
-import random
-import datetime
-
 sys.path.append("..")
 sys.path.append("../..")
 sys.path.append("../../..")
 
+import click
+import random
+import datetime
+import requests
+import time
+import json
+
 from common.logger import AppLogger
-from www_yizhoucp_cn.resource.crack import crack_sign
 
 from common.mongo import MongDb
 from configs.mongo_config import LocalMongoConfig
 
-import requests
-import time
 
 logger = AppLogger('yizhoucp.log').get_logger()
 
@@ -30,13 +30,16 @@ class YizhoucpCrawl(object):
     __START_URL = "https://api.myrightone.com/api/feed/moment-list"
     __LIKE_PID_URL = "https://api.myrightone.com/api/feed/like"
 
+    __CRACK_SIGN_URL = "http://wx.zxiaoji.com/cp"
+
     __HOST = "api.myrightone.com"
 
-    def __init__(self, secrite_key, token, user_id, log):
+    def __init__(self, secrite_key, token, user_id, check_code, log):
         self.log = log
         self.secrite_key = secrite_key
         self.user_id = user_id
         self.token = token
+        self.check_code = check_code
         self.request = self.__init_reqeust()
         self.cp_mongo = MongDb(LocalMongoConfig.HOST,
                                LocalMongoConfig.PORT,
@@ -62,6 +65,17 @@ class YizhoucpCrawl(object):
         self.request.headers = headers
         return self.request
 
+    def __get_sign(self, params):
+        req = requests.get(self.__CRACK_SIGN_URL, params={"secret_key": self.secrite_key,
+                                                          "check_code": self.check_code,
+                                                          "params": json.dumps(params)})
+        req_json = req.json()
+        if req_json.get("status") != 1:
+            self.log.error("提取sign发生错误，错误原因是：")
+            self.log.error(req_json.get("data"))
+            return None
+        return req_json.get("data")
+
     def get_moment_list(self):
         self.log.info("开始采集动态页")
         params = {
@@ -72,7 +86,10 @@ class YizhoucpCrawl(object):
             "user_id": self.user_id,
             "last_object_id": "",
         }
-        sign = crack_sign(params, self.secrite_key)
+
+        sign = self.__get_sign(params)
+        if not sign:
+            return
         params["sign"] = sign
         resp = self.request.get(self.__START_URL, params=params, verify=False)
         resp_json = resp.json()
@@ -112,7 +129,7 @@ class YizhoucpCrawl(object):
                 "timestamp": "0",
                 "user_id": self.user_id,
             }
-            sign = crack_sign(fid_params, self.secrite_key)
+            sign = self.__get_sign(fid_params)
             fid_params["sign"] = sign
             resp = self.request.get(self.__LIKE_PID_URL, params=fid_params, verify=False)
             resp_json = resp.json()
@@ -161,6 +178,7 @@ class YizhoucpCrawl(object):
         self.cp_mongo.insert_batch_data(self.cp_table, [new_data], insert=True)
         return 1
 
+
 @click.command()
 @click.option('--secrite_key',
               type=str,
@@ -171,11 +189,15 @@ class YizhoucpCrawl(object):
 @click.option('--user_id',
               type=str,
               help=u'用户id')
-def main(secrite_key, token, user_id):
+@click.option('--check_code',
+              type=str,
+              help=u'check_code')
+def main(secrite_key, token, user_id, check_code):
     try:
         YizhoucpCrawl(secrite_key,
                       token,
                       user_id,
+                      check_code,
                       log=logger).start()
 
     except Exception as e:
