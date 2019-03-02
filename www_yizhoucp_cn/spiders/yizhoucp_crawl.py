@@ -182,7 +182,7 @@ class YizhoucpCrawl(object):
 
 
 @click.command()
-@click.option('--secrite_key',
+@click.option('--secret_key',
               type=str,
               help=u'secret_key')
 @click.option('--token',
