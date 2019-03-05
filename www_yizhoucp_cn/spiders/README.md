@@ -6,8 +6,11 @@
 ### 运行方式
 1. 抓包获得 token(对应于access_token)、user_id(对应于uid)、secret_key 字段
 2. 关注公众号：鸡仔说，后台回复cp，获取唯一的 check_code 校验码
-3. 启动mongo数据库 ```mongod```
-4. 启动
+3. 启动mongo数据库
+
+ ```mongod```
+ 
+4. 运行脚本
 ```
 # 这里仅为演示数据，实际参数请以你实际的账户参数为准
 python lanuch_cp_spider.py --secrite_key 423dabf849172d8a15342710cc3211220 --token 1576511283920896_6364131_1573704298_86dbaf32dc852651de5c8a5bfcac7bc7 --user_id 7314332 --check_code odyvBt5OiGhR72FBF2AnMnCa_Dt3
