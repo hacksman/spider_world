@@ -68,7 +68,7 @@ class YizhoucpCrawl(object):
     def __get_sign(self, params):
         req = requests.get(self.__CRACK_SIGN_URL, params={"secret_key": self.secret_key,
                                                           "check_code": self.check_code,
-                                                          "params": json.dumps(params)})
+                                                          "params": json.dumps(params)}, timeout=30)
         req_json = req.json()
         if req_json.get("status") != 1:
             self.log.error("提取sign发生错误，错误原因是：")
@@ -91,7 +91,7 @@ class YizhoucpCrawl(object):
         if not sign:
             return
         params["sign"] = sign
-        resp = self.request.get(self.__START_URL, params=params, verify=False)
+        resp = self.request.get(self.__START_URL, params=params, verify=False, timeout=30)
         resp_json = resp.json()
         return resp_json
 
@@ -133,7 +133,7 @@ class YizhoucpCrawl(object):
             if not sign:
                 return False
             fid_params["sign"] = sign
-            resp = self.request.get(self.__LIKE_PID_URL, params=fid_params, verify=False)
+            resp = self.request.get(self.__LIKE_PID_URL, params=fid_params, verify=False, timeout=30)
             resp_json = resp.json()
             if resp_json.get("message") == "success":
                 nick_name = post_data["user"].get("nickname")
