@@ -7,9 +7,9 @@ from common.logger import AppLogger
 import click
 
 @click.command()
-@click.option('--secrite_key',
+@click.option('--secret_key',
               type=str,
-              help=u'secrite_key')
+              help=u'secret_key')
 @click.option('--token',
               type=str,
               help=u'token')
@@ -19,9 +19,9 @@ import click
 @click.option('--check_code',
               type=str,
               help=u'check_code')
-def main(secrite_key, token, user_id, check_code):
+def main(secret_key, token, user_id, check_code):
     log = AppLogger("yizhou_cp.log").get_logger()
-    YizhoucpCrawl(secrite_key, token, user_id, check_code, log=log).start()
+    YizhoucpCrawl(secret_key, token, user_id, check_code, log=log).start()
 
 if __name__ == '__main__':
     main()

@@ -13,7 +13,7 @@
 4. 运行脚本
 ```
 # 这里仅为演示数据，实际参数请以你实际的账户参数为准
-python lanuch_cp_spider.py --secrite_key 423dabf849172d8a15342710cc3211220 --token 1576511283920896_6364131_1573704298_86dbaf32dc852651de5c8a5bfcac7bc7 --user_id 7314332 --check_code odyvBt5OiGhR72FBF2AnMnCa_Dt3
+python lanuch_cp_spider.py --secret_key 423dabf849172d8a15342710cc3211220 --token 1576511283920896_6364131_1573704298_86dbaf32dc852651de5c8a5bfcac7bc7 --user_id 7314332 --check_code odyvBt5OiGhR72FBF2AnMnCa_Dt3
 ```
 ### 运行结果示例
 ```
