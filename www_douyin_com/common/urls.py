@@ -38,3 +38,10 @@ class URL:
     def like_video_url(cls):
         return cls.COMMON_URL + "commit/item/digg/"
 
+    @classmethod
+    def api_device(cls, token):
+        return "http://wx.zxiaoji.com/device/gen?token={}".format(token)
+
+    @classmethod
+    def api_sign(cls, token):
+        return "http://wx.zxiaoji.com/douyinsign?token={}".format(token)

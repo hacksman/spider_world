@@ -23,7 +23,6 @@ file_path_now = os.path.abspath(__file__)
 
 from www_douyin_com.common.utils import *
 from www_douyin_com.common.log_handler import getLogger
-from www_douyin_com.spiders.douyin_login import DouyinLogin
 
 from www_douyin_com.common.urls import URL
 
@@ -32,8 +31,8 @@ class DouyinCrawl(object):
     logger = getLogger("DouyinCrawl", console_out=True)
 
     # headers
-    __HEADERS = {"User-Agent": "Aweme/2.7.0 (iPhone; iOS 11.0; Scale/2.00)"}
-    # __HEADERS = {"User-Agent": "Aweme/2.8.0 (iPhone; iOS 12.0; Scale/2.00)"}
+    __HEADERS = {"User-Agent": "okhttp/3.10.0.1"}
+    # __HEADERS = {"User-Agent": "Aweme/2.9.0 "}
 
     # params
     __FOLLOW_LIST_PARAMS = {
@@ -53,59 +52,56 @@ class DouyinCrawl(object):
     }
 
     __USER_VIDEO_PARAMS = {
-        "count": "21",
+        "count": "20",
         # "offset": "0",
         "user_id": None,
         # "max_cursor": str(int(time.time())) + "000",
         "max_cursor": "0",
     }
 
+    __COOKIES = {
+            'ttreq': '1$f58a422877af68a234141b2dc94eda292d8cd901',
+            'sid_guard': '190e1d75900416b7eb62c639d7fe653a%7C1548671527%7C5184000%7CFri%2C+29-Mar-2019+10%3A32%3A07+GMT',
+            'uid_tt': '51289fc385905048dbc45575efead7d5',
+            'sid_tt': '190e1d75900416b7eb62c639d7fe653a',
+            'sessionid': '190e1d75900416b7eb62c639d7fe653a',
+            'odin_tt': "d44fbf1baf710b502070386558b48c94250edc24497a85f029c3cbef046cf706d27692be6295813ef3c6ca20dfa2a405d2d4a0d169224c3f65a1b55e18d33bf7",
+        }
+
     # try times
 
     # common
     __MAX_TOKEN_VALIDITY = 60 * 50
 
-    def __init__(self, phone=None):
-        self.common_params = common_params()
+    def __init__(self, token):
 
-        self.__token_last_time = int(time.time())
+        self.__device_last_time = int(time.time())
 
-        self.__token = None
+        self.token = token
 
-        self.__request = self.__init__session(phone) if phone else None
+        self.__device = None
 
-    def __get_token(self):
+        self.common_params = None
+
+        self.__update_device_common_params()
+
+    def __update_device_common_params(self):
+
         current_time = int(time.time())
 
-        # 第一次获取token
-        if not self.__token:
-            self.__token_last_time = current_time
-            self.__token = getToken()
-            return self.__token
-
-        # token有效期已过
-        if current_time - self.__token_last_time > self.__MAX_TOKEN_VALIDITY:
-            self.logger.info("__token 在有效期内已过，重新获取...")
-            self.__token = getToken()
-            self.__token_last_time = current_time
-            return self.__token
-
-        return self.__token
-
-    def __get_device(self):
-        return getDevice()
-
-    def __generate_sign(self, token, params):
-        sign = getSign(token, params)
-        return sign
-
-    def __init__session(self, phone):
-        if not phone:
-            self.logger.info("请输入手机号码以登录账户!!!")
+        if not self.__device:
+            self.__device = get_device(self.token)
+            self.common_params = common_params(self.__device)
+            print(self.__device)
+            self.__device_last_time = current_time
             return
-        return DouyinLogin().login_pickle_cookie()
 
-    @check_id
+        if current_time - self.__device_last_time > self.__MAX_TOKEN_VALIDITY:
+            self.logger.info("__device 在有效期内已过，重新获取...")
+            self.__device = get_device(self.token)
+            self.common_params = common_params(self.__device)
+            self.__device_last_time = current_time
+
     def grab_user_media(self, user_id, action, content=None):
         count = 1
         self.logger.info("当前正在爬取 user id 为 {} 的第 👉 {} 👈 页内容...".format(user_id ,count))
@@ -115,23 +111,26 @@ class DouyinCrawl(object):
             self.logger.info("当前正在爬取 user id 为 {} 的第 👉 {} 👈 页内容...".format(user_id, count))
             hasmore, max_cursor = self.grab_video(user_id, action, content, max_cursor)
 
-    @check_id
     def grab_video(self, user_id, action, content, max_cursor=0):
+
+        url = URL.favorite_url() if action == "USER_LIKE" else URL.post_url()
+
         favorite_params = copy.deepcopy(self.__USER_VIDEO_PARAMS)
         favorite_params['user_id'] = user_id
         favorite_params['max_cursor'] = max_cursor
         query_params = {**favorite_params, **self.common_params}
-        sign = getSign(self.__get_token(), query_params)
-        params = {**query_params, **sign}
-
+        real_url = gen_url(self.token, url, query_params)
         # 目前支持两种类型爬取，用户喜欢过的，和当前用户所有已发布的视频
-        url = URL.favorite_url() if action == "USER_LIKE" else URL.post_url()
-        resp = requests.get(url,
-                            params=params,
-                            verify=False,
-                            headers=self.__HEADERS)
+        cookies = self.__COOKIES
+        cookies['install_id'] = str(self.__device["install_id"])
 
-        favorite_info = resp.json()
+        resp = requests.get(real_url,
+                            verify=False,
+                            cookies=cookies,
+                            headers={"User-Agent": "okhttp/3.10.0.1"},
+                            timeout=3)
+
+        favorite_info = json.loads(resp.content.decode("utf-8"))
 
         hasmore = favorite_info.get('has_more')
         max_cursor = favorite_info.get('max_cursor')
@@ -168,17 +167,22 @@ class DouyinCrawl(object):
             has_more = self.__grab_comment(aweme_id, cursor, upvote_bound)
 
     def __grab_comment(self, aweme_id, cursor, upvote_bound=10):
+        url = URL.comment_url()
         comment_params = copy.deepcopy(self.__COMMENT_LIST_PARAMS)
         comment_params['aweme_id'] = aweme_id
         comment_params['cursor'] = cursor
-        query_params = {**comment_params, **self.common_params}
-        sign = getSign(self.__get_token(), query_params)
-        params = {**query_params, **sign}
-        resp = requests.get(URL.comment_url(),
-                            params=params,
+        params = {**comment_params, **self.common_params}
+        real_url = gen_url(self.token, url, params)
+
+        cookies = self.__COOKIES
+        cookies['install_id'] = str(self.__device["install_id"])
+
+        resp = requests.get(real_url,
                             verify=False,
+                            cookies=cookies,
                             headers=self.__HEADERS)
-        comment_content = resp.json()
+
+        comment_content = json.loads(resp.content.decode("utf-8"))
 
         comments = comment_content.get("comments")
 
@@ -202,8 +206,6 @@ class DouyinCrawl(object):
                     "user_id": per_comment['user'].get("uid"),
                 }
 
-            print(upvote_count)
-
             if int(upvote_count) < upvote_bound:
                 return -2
 
@@ -216,6 +218,7 @@ class DouyinCrawl(object):
         return hasmore
 
     def download_user_video(self, aweme_id, **video_infos):
+
         video_content = self.download_video(aweme_id)
         music_id = video_infos.get("music_id")
         music_content = self.download_music(music_id)
@@ -257,23 +260,31 @@ class DouyinCrawl(object):
         return music_content
 
     def download_video(self, aweme_id):
+
         query_params = self.common_params
         query_params['aweme_id'] = aweme_id
 
-        sign = getSign(self.__get_token(), query_params)
-        params = {**query_params, **sign}
+        params = {**query_params, **self.common_params}
+
+        url = URL.video_detail_url()
+
+        real_url = gen_url(self.token, url, params)
 
         post_data = {
             "aweme_id": aweme_id
         }
 
-        resp = requests.get(URL.video_detail_url(),
-                            params=params,
+        cookies = self.__COOKIES
+        cookies['install_id'] = str(self.__device["install_id"])
+
+        resp = requests.get(real_url,
                             data=post_data,
                             verify=False,
-                            headers=self.__HEADERS)
-        resp_result = resp.json()
-        # print(resp_result)
+                            cookies=cookies,
+                            headers=self.__HEADERS,
+                            timeout=3)
+        resp_result = json.loads(resp.content.decode("utf-8"))
+
         try:
             play_addr_raw = resp_result['aweme_detail']['video']['play_addr']['url_list']
             play_addr = play_addr_raw[0]
@@ -285,10 +296,6 @@ class DouyinCrawl(object):
         return content
 
     def download_one_video(self, aweme_id):
-        if not re.findall('^\d{19}$', aweme_id):
-            self.logger.error("download_one_video 收到错误的视频id，校验后再尝试")
-            self.logger.error("正确的视频id是19位纯数字")
-            return
         author_nick_name = "单视频下载专用目录"
         video_name = aweme_id
         file_path_grandfather = "/".join(file_path_now.split("/")[:-2])
@@ -315,40 +322,17 @@ class DouyinCrawl(object):
             writer = csv.writer(f)
             writer.writerow(comment_sort)
 
-    def like_video(self, aweme_id):
-        query_params = {**{"pass-region": "1"}, **self.common_params}
-        sign = getSign(self.__get_token(), query_params)
-        params = {**query_params, **sign}
-
-        form_params = {
-            "aweme_id": aweme_id,
-            "type": 1
-        }
-
-        headers = copy.deepcopy(self.__HEADERS)
-        headers["sdk-version"] = '1'
-        headers["Accept-Encoding"] = 'br, gzip, deflate'
-
-        print(self.__request.cookies)
-
-        result = self.__request.post(URL.like_video_url(),
-                                     params=params,
-                                     data=form_params,
-                                     verify=False,
-                                     headers=headers)
-
-        print(result.json())
-
-        # if result.json().get("status_code") == "0":
-        #     self.logger.info("喜欢成功...")
-
 
 if __name__ == '__main__':
-    douyin = DouyinCrawl("123")
 
-    aweme_id = "6612876887381249287"
+    token = "关注公众号【鸡仔说】回复【抖音】获取自己的唯一 token 号"
+
+    douyin = DouyinCrawl(token)
+
+    aweme_id = "6661896797578906883"
 
     user_id = "73763378004"
-    douyin.grab_user_media(user_id, "USER_POST")
 
-    douyin.like_video(aweme_id)
+    # douyin.grab_user_media(user_id, "USER_POST")
+    # douyin.grab_comment_main(aweme_id)
+    douyin.download_one_video(aweme_id)
