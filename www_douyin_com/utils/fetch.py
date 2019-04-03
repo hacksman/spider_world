@@ -1,6 +1,9 @@
 #!/usr/bin/env python 
 # coding:utf-8
 
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 import requests
 from retrying import retry
 
@@ -23,9 +26,10 @@ def fetch(url, **kwargs):
         kwargs.update({"verify": False})
         kwargs.update({"timeout": kwargs.get("timeout") or DEFALUT_REQ_TIMEOUT})
         if kwargs.get("method") in ["post", "POST"]:
-            form_data = kwargs.get("data")
+            form_data = kwargs.get("data") or kwargs.get("json")
             if not form_data:
                 raise requests.RequestException("post method need form data, but got {}".format(form_data))
+            kwargs.pop("method", None)
             response = requests.post(url, **kwargs)
         else:
             response = requests.get(url, **kwargs)

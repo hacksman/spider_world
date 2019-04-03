@@ -25,6 +25,7 @@ from www_douyin_com.common.utils import *
 from www_douyin_com.common.log_handler import getLogger
 
 from www_douyin_com.common.urls import URL
+from www_douyin_com.utils.fetch import fetch
 
 
 class DouyinCrawl(object):
@@ -32,7 +33,6 @@ class DouyinCrawl(object):
 
     # headers
     __HEADERS = {"User-Agent": "okhttp/3.10.0.1"}
-    # __HEADERS = {"User-Agent": "Aweme/2.9.0 "}
 
     # params
     __FOLLOW_LIST_PARAMS = {
@@ -277,18 +277,17 @@ class DouyinCrawl(object):
         cookies = self.__COOKIES
         cookies['install_id'] = str(self.__device["install_id"])
 
-        resp = requests.get(real_url,
-                            data=post_data,
-                            verify=False,
-                            cookies=cookies,
-                            headers=self.__HEADERS,
-                            timeout=3)
-        resp_result = json.loads(resp.content.decode("utf-8"))
+        resp = fetch(real_url,
+                     data=post_data,
+                     cookies=cookies,
+                     headers=self.__HEADERS,
+                     timeout=3)
+        resp_result = json.dumps(resp)
 
         try:
             play_addr_raw = resp_result['aweme_detail']['video']['play_addr']['url_list']
             play_addr = play_addr_raw[0]
-            content = requests.get(play_addr).content
+            content = fetch(play_addr).content
         except:
             self.logger.warning("提取视频信息失败...")
             content = None

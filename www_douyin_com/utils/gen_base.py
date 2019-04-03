@@ -9,7 +9,7 @@ from www_douyin_com.utils.tools import params2str
 
 def gen_device(token):
     resp = fetch(URL.api_device(token), timeout=10)
-    return resp.json()
+    return resp
 
 
 def gen_common_params(device_info):
@@ -28,6 +28,6 @@ def gen_real_url(token, raw_url, query):
     if isinstance(query, dict):
         query = params2str(query)
     url = raw_url + "?" + query
-    resp = fetch(URL.api_sign(token), json={"url": url}, method="post").json()
+    resp = fetch(URL.api_sign(token), json={"url": url}, method="post")
     real_url = resp['url']
     return real_url
