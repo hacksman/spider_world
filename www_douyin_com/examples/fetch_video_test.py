@@ -6,6 +6,7 @@ from www_douyin_com.utils.gen_base import (gen_device, gen_common_params, gen_re
 from www_douyin_com.utils.fetch import fetch
 from www_douyin_com.config import COMMON_COOKIES
 from www_douyin_com.config import COMMON_HEADERS
+from www_douyin_com.utils.transform import data_to_video
 
 import json
 
@@ -27,6 +28,9 @@ if __name__ == '__main__':
                  verify=False,
                  cookies=cookies,
                  headers=COMMON_HEADERS,
-                 timeout=3)
+                 timeout=3).json()
+
+    for video_info in resp.get("aweme_list"):
+        print(data_to_video(video_info).desc)
 
     print(json.dumps(resp, ensure_ascii=False))

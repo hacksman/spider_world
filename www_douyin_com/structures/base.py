@@ -3,7 +3,6 @@
 
 import datetime
 from copy import deepcopy
-from www_douyin_com.structures.videos import Video
 
 
 class Base:
@@ -13,6 +12,7 @@ class Base:
         for k, v in d.items():
             if not v:
                 continue
+            from www_douyin_com.structures import Video
             if isinstance(v, Video):
                 d[k] = v.json()
             if isinstance(v, datetime.datetime):

@@ -3,6 +3,7 @@
 
 from www_douyin_com.structures.videos import Video
 
+
 def data_to_video(data):
     id = data.get("aweme_id")
     desc = data.get("desc")

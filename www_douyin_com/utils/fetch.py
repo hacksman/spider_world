@@ -35,7 +35,7 @@ def fetch(url, **kwargs):
             response = requests.get(url, **kwargs)
         if response.status_code != 200:
             raise requests.ConnectionError("request status code should be 200! but got {}".format(response.status_code))
-        return response.json()
+        return response
 
     try:
         result = _fetch(url, **kwargs)

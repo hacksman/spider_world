@@ -281,12 +281,12 @@ class DouyinCrawl(object):
                      data=post_data,
                      cookies=cookies,
                      headers=self.__HEADERS,
-                     timeout=3)
-        resp_result = json.dumps(resp)
+                     timeout=3).json()
 
         try:
-            play_addr_raw = resp_result['aweme_detail']['video']['play_addr']['url_list']
+            play_addr_raw = resp['aweme_detail']['video']['play_addr']['url_list']
             play_addr = play_addr_raw[0]
+            print(play_addr)
             content = fetch(play_addr).content
         except:
             self.logger.warning("提取视频信息失败...")

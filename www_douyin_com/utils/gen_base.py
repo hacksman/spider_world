@@ -8,7 +8,7 @@ from www_douyin_com.utils.tools import params2str
 
 
 def gen_device(token):
-    resp = fetch(URL.api_device(token), timeout=10)
+    resp = fetch(URL.api_device(token), timeout=10).json()
     return resp
 
 
@@ -28,6 +28,6 @@ def gen_real_url(token, raw_url, query):
     if isinstance(query, dict):
         query = params2str(query)
     url = raw_url + "?" + query
-    resp = fetch(URL.api_sign(token), json={"url": url}, method="post")
+    resp = fetch(URL.api_sign(token), json={"url": url}, method="post").json()
     real_url = resp['url']
     return real_url

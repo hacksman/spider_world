@@ -12,5 +12,5 @@ class Video(Base):
         self.desc = kwargs.get("desc")
 
     def __repr__(self):
-        pass
+        "<Video: <%s, %s>>" % (self.id, self.desc[:10].strip() if self.desc else None)
 
