@@ -1,6 +1,7 @@
 #!/usr/bin/env python 
 # coding:utf-8
 
+TOKEN = "关注公众号【鸡仔说】回复【抖音】获取自己的唯一 token 号"
 
 DEFALUT_REQ_TIMEOUT = 5
 MAX_RETRY_REQ_TIMES = 3
