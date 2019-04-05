@@ -12,7 +12,6 @@ COMMON_HEADERS = {"User-Agent": "okhttp/3.10.0.1"}
 
 APPINFO = {
     "version_code": "290",
-    "app_version": "2.9.0",
     "version_name": "2.9.0",
     "device_platform": "android",
     "ssmix": "a",
@@ -28,9 +27,8 @@ APPINFO = {
     "_rticket": "1548672388498",
     "channel": "wandoujia_zhiwei",
     "app_name": "aweme",
-    "build_number": "27014",
     "aid": "1128",
-    "ac": "WIFI",
+    "ac": "wifi",
 }
 
 COMMON_COOKIES = {

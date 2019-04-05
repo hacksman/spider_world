@@ -26,6 +26,7 @@ from www_douyin_com.common.log_handler import getLogger
 
 from www_douyin_com.common.urls import URL
 from www_douyin_com.utils.fetch import fetch
+from www_douyin_com.config import TOKEN
 
 
 class DouyinCrawl(object):
@@ -326,9 +327,9 @@ if __name__ == '__main__':
 
     token = "关注公众号【鸡仔说】回复【抖音】获取自己的唯一 token 号"
 
-    douyin = DouyinCrawl(token)
+    douyin = DouyinCrawl(TOKEN)
 
-    aweme_id = "6661896797578906883"
+    aweme_id = "6675585689419091212"
 
     user_id = "73763378004"
 

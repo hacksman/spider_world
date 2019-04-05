@@ -10,7 +10,8 @@ class Video(Base):
         super().__init__()
         self.id = kwargs.get("id")
         self.desc = kwargs.get("desc")
+        self.play_url = kwargs.get('play_url')
 
     def __repr__(self):
-        "<Video: <%s, %s>>" % (self.id, self.desc[:10].strip() if self.desc else None)
+        return "<Video: <%s, %s>>" % (self.id, self.desc[:20].strip() if self.desc else None)
 

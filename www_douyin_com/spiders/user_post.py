@@ -8,6 +8,7 @@ from www_douyin_com.config import TOKEN
 from www_douyin_com.config import COMMON_COOKIES
 from www_douyin_com.config import COMMON_HEADERS
 from www_douyin_com.utils.transform import data_to_video
+from www_douyin_com.spiders.video import aweme_id_video_url
 
 import json
 import time
@@ -39,13 +40,19 @@ def post(user_id):
                           headers=COMMON_HEADERS,
                           timeout=3).json()
 
-        print(json.dumps(resp_json))
+        # print(json.dumps(resp_json))
 
         results = []
         for video_info in resp_json.get("aweme_list"):
+            aweme_id = video_info.get("aweme_id")
+            play_url = aweme_id_video_url(aweme_id)
+            if not play_url:
+                print("Failed grab <{}> video play url".format(aweme_id))
+                continue
+            video_info["play_url"] = play_url
             results.append(data_to_video(video_info))
 
-        yield resp_json
+        yield results
 
         max_cursor = resp_json.get("max_cursor")
         count = 12
@@ -54,13 +61,15 @@ def post(user_id):
             print("%s post video spider done!" % user_id)
             break
 
-        time.sleep(5)
+        # time.sleep(5)
 
 
 if __name__ == '__main__':
     count = 0
-    for i in post("101011269125"):
-        pass
+    for i in post("98080428976"):
+        # print(i.__class__)
+        for video in i:
+            print(video.play_url)
         # count += 1
         # if count > 0:
         #     break
