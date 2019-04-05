@@ -14,11 +14,9 @@ def gen_device(token):
 
 def gen_common_params(device_info):
     item = {
-        "new_user":         str(device_info['new_user']),
         "device_id":        str(device_info['device_id']),
         "openudid":         str(device_info['openudid']),
         "iid":              str(device_info['install_id']),
-        "android_id":       str(device_info['android_id']),
     }
     params = {**item, **APPINFO}
     return params

@@ -10,6 +10,8 @@ from retrying import retry
 from www_douyin_com.config import (DEFALUT_REQ_TIMEOUT, MAX_RETRY_REQ_TIMES, RETRY_RANDON_MAX_WAIT,
                                    RETRY_RANDON_MIN_WAIT)
 
+from www_douyin_com.utils.proxy import grab_proxy
+
 
 def need_retry(exception):
     result = isinstance(exception, (requests.ConnectionError, requests.ReadTimeout))
@@ -25,6 +27,8 @@ def fetch(url, **kwargs):
     def _fetch(url, **kwargs):
         kwargs.update({"verify": False})
         kwargs.update({"timeout": kwargs.get("timeout") or DEFALUT_REQ_TIMEOUT})
+        proxy = grab_proxy()
+        kwargs.update({"proxies": {"http:": proxy, "https:": proxy.replace("http", "https")}})
         if kwargs.get("method") in ["post", "POST"]:
             form_data = kwargs.get("data") or kwargs.get("json")
             if not form_data:
@@ -42,4 +46,3 @@ def fetch(url, **kwargs):
         return result
     except (requests.ConnectionError, requests.ReadTimeout):
         return {}
-

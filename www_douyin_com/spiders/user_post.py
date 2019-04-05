@@ -27,40 +27,41 @@ def post(user_id):
 
         query_params = {"count": 21 if not count else count, "user_id": user_id, "max_cursor": max_cursor}
         search_params = {**common_params, **query_params}
-        real_url = gen_real_url(TOKEN, URL.favorite_url(), search_params)
+        real_url = gen_real_url(TOKEN, URL.post_url(), search_params)
 
         cookies = COMMON_COOKIES
         cookies['install_id'] = str(device["install_id"])
 
         # download video
-        resp = fetch(real_url,
-                     verify=False,
-                     cookies=cookies,
-                     headers=COMMON_HEADERS,
-                     timeout=3).json()
+        resp_json = fetch(real_url,
+                          verify=False,
+                          cookies=cookies,
+                          headers=COMMON_HEADERS,
+                          timeout=3).json()
 
-        if resp.get("has_more") != 1:
+        print(json.dumps(resp_json))
+
+        results = []
+        for video_info in resp_json.get("aweme_list"):
+            results.append(data_to_video(video_info))
+
+        yield resp_json
+
+        max_cursor = resp_json.get("max_cursor")
+        count = 12
+
+        if resp_json.get("has_more") != 1:
             print("%s post video spider done!" % user_id)
             break
 
-        print(json.dumps(resp, ensure_ascii=False))
-
-        results = []
-        for video_info in resp.get("aweme_list"):
-            results.append(data_to_video(video_info))
-
-        yield resp
-
-        max_cursor = resp.get("max_cursor")
-        count = 12
-        # time.sleep(5)
+        time.sleep(5)
 
 
 if __name__ == '__main__':
     count = 0
-    for i in post("73763378004"):
+    for i in post("101011269125"):
         pass
         # count += 1
-        # if count > 2:
+        # if count > 0:
         #     break
 
