@@ -2,7 +2,6 @@
 # coding:utf-8
 
 from www_douyin_com.structures.videos import Video
-from www_douyin_com.utils.tools import get_video_url
 
 
 def data_to_video(data):

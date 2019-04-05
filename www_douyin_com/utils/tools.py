@@ -9,7 +9,3 @@ def params2str(params):
     query = query.strip("&")
     return query
 
-
-def get_video_url(array):
-    if isinstance(array, list) and len(array) > 0:
-        return array[-1]
