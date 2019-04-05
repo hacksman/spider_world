@@ -26,6 +26,10 @@ def gen_real_url(token, raw_url, query):
     if isinstance(query, dict):
         query = params2str(query)
     url = raw_url + "?" + query
-    resp = fetch(URL.api_sign(token), json={"url": url}, method="post").json()
-    real_url = resp['url']
+    resp = fetch(URL.api_sign(token), json={"url": url}, method="post")
+    if not resp:
+        print("你的当日 token 次数已经用完，请明天再来尝试吧...")
+        raise BaseException("you have run out of token.Please try tomorrow")
+    resp_json = resp.json()
+    real_url = resp_json['url']
     return real_url
