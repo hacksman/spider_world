@@ -11,6 +11,7 @@ class Video(Base):
         self.id = kwargs.get("id")
         self.desc = kwargs.get("desc")
         self.play_url = kwargs.get('play_url')
+        self.user_info = kwargs.get("user_info")
 
     def __repr__(self):
         return "<Video: <%s, %s>>" % (self.id, self.desc[:20].strip() if self.desc else None)

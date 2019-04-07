@@ -18,7 +18,7 @@ class FileHandler(Handler):
             makedirs(self.folder)
 
     async def _process(self, obj, **kwargs):
-        print("Downing...", obj, "...")
+        print("Downloading...", obj, "...")
         kwargs.update({'ssl': False})
         kwargs.update({'timeout': 10})
         kwargs.update({"proxy": grab_proxy()})
