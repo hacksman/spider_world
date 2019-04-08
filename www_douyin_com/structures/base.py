@@ -12,8 +12,8 @@ class Base:
         for k, v in d.items():
             if not v:
                 continue
-            from www_douyin_com.structures import Video
-            if isinstance(v, Video):
+            from www_douyin_com.structures import (Video, User, Statistic, Music)
+            if isinstance(v, (Video, User, Statistic, Music)):
                 d[k] = v.json()
             if isinstance(v, datetime.datetime):
                 d[k] = str(v)

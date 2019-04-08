@@ -10,12 +10,8 @@ from www_douyin_com.config import COMMON_HEADERS
 from www_douyin_com.utils.transform import data_to_video
 from www_douyin_com.spiders.video import aweme_id_video_url
 
-import json
-import time
-import random
 
-
-def post(user_id):
+def like(user_id):
 
     device = gen_device(TOKEN)
     common_params = gen_common_params(device)
@@ -28,7 +24,7 @@ def post(user_id):
 
         query_params = {"count": 21 if not count else count, "user_id": user_id, "max_cursor": max_cursor}
         search_params = {**common_params, **query_params}
-        real_url = gen_real_url(TOKEN, URL.post_url(), search_params)
+        real_url = gen_real_url(TOKEN, URL.favorite_url(), search_params)
 
         cookies = COMMON_COOKIES
         cookies['install_id'] = str(device["install_id"])
@@ -66,11 +62,10 @@ def post(user_id):
 
 if __name__ == '__main__':
     count = 0
-    for i in post("56663252872"):
+    for i in like("56663252872"):
         # print(i.__class__)
         for video in i:
             print(video.play_url)
         # count += 1
         # if count > 0:
         #     break
-
