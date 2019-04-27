@@ -27,8 +27,9 @@ def fetch(url, **kwargs):
     def _fetch(url, **kwargs):
         kwargs.update({"verify": False})
         kwargs.update({"timeout": kwargs.get("timeout") or DEFALUT_REQ_TIMEOUT})
-        proxy = grab_proxy()
-        kwargs.update({"proxies": {"http:": proxy, "https:": proxy.replace("http", "https")}})
+        if kwargs.get("USE_PROXY"):
+            proxy = grab_proxy()
+            kwargs.update({"proxies": {"http:": proxy, "https:": proxy.replace("http", "https")}})
         if kwargs.get("method") in ["post", "POST"]:
             form_data = kwargs.get("data") or kwargs.get("json")
             if not form_data:

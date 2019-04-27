@@ -93,7 +93,6 @@ class DouyinCrawl(object):
         if not self.__device:
             self.__device = get_device(self.token)
             self.common_params = common_params(self.__device)
-            print(self.__device)
             self.__device_last_time = current_time
             return
 
@@ -282,17 +281,15 @@ class DouyinCrawl(object):
                      data=post_data,
                      cookies=cookies,
                      headers=self.__HEADERS,
-                     timeout=3).json()
+                     timeout=3)
 
         try:
-            play_addr_raw = resp['aweme_detail']['video']['play_addr']['url_list']
+            play_addr_raw = resp.json()['aweme_detail']['video']['play_addr']['url_list']
             play_addr = play_addr_raw[0]
-            print(play_addr)
             content = fetch(play_addr).content
         except:
             self.logger.warning("提取视频信息失败...")
             content = None
-
         return content
 
     def download_one_video(self, aweme_id):
@@ -308,7 +305,7 @@ class DouyinCrawl(object):
 
     def download_comment(self, aweme_id, **comment_info):
         comment_sort = [0, 0, 0, 0]
-        print(comment_info)
+        # print(comment_info)
         for k, v in comment_info.items():
             if k == "user_id":
                 comment_sort[0] = v
@@ -331,8 +328,8 @@ if __name__ == '__main__':
 
     aweme_id = "6675585689419091212"
 
-    user_id = "73763378004"
+    user_id = "58969898627"
 
-    # douyin.grab_user_media(user_id, "USER_POST")
+    douyin.grab_user_media(user_id, "USER_POST")
     # douyin.grab_comment_main(aweme_id)
-    douyin.download_one_video(aweme_id)
+    # douyin.download_one_video(aweme_id)
