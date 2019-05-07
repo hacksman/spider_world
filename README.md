@@ -29,6 +29,9 @@ $ cd spider_world/www_douyin_com/
 ##### step 2: 运行项目
 
 **你需要关注微信公众号：【鸡仔说】，回复关键词"抖音"，将 config.py 目录下的 token 值替换成你的 token 值**
+<p align="center">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/douyin_video_id_1.jpeg" width="240">
+</p>
 
 你有两种方式运行这个项目：
 
