@@ -28,7 +28,7 @@ $ cd spider_world/www_douyin_com/
 
 #### step 2: 关注公众号【鸡仔说】回复关键字【抖音】获取你的 token 值
 
-**你需要关注微信公众号：【鸡仔说】，回复关键词"抖音"，将 config.py 目录下的 token 值替换成你的 token 值**
+**获得 token 值后，你需要将 www_douyin_com/config.py 文件下的 TOKEN 值替换成你的 token 值**
 <p align="center">
 <img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/key_word.jpeg" width="240">
 </p>
