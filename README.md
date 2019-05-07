@@ -18,34 +18,20 @@
 ### 如何使用抖音爬虫
 
 > python3下运行这个项目
+
+##### step 1: 拷贝项目到本地
 ```angular2html
 $ git clone https://github.com/hacksman/spider_world.git
 $ cd spider_world/www_douyin_com/
-$ python video_download_run.py -upost 93515402600
-```
-__已经支持命令对应的功能有：__
-```
--upost  该用户已发布的所有视频
--ulike  该用户喜欢过的所有视频
--m      是否同时下载该用户的视频和音频（注意，这里必须和-upost 或 -ulike 同时使用）
--one    下载单个视频 
 ```
 
-__命令演示：__
-```
-# 下载用户id为(93515402600) 所有已发布的视频
-$ python video_download_run.py -upost 93515402600
+##### step 2: 运行项目
 
-# 下载用户id为(93515402600) 所有已发布的视频和音频
-$ python video_download_run.py -m -upost 93515402600
+**你需要关注微信公众号：鸡仔说，回复抖音，将 config.py 目录下的 token 值替换成你的 token 值**
 
-# 下载用户id为(93515402600) 所有喜欢过的视频
-$ python video_download_run.py -ulike 93515402600
-
-# 下载视频id为(6610679501925911815) 的视频
-$ python video_download_run.py -one 6610679501925911815
-
-```
+你有两种方式运行这个项目：
+①. 找到 spiders/douyin_crawl.py 文件，修改对应参数运行，然后直接运行即可
+②. 找到 examples/fetch_video_test.py 文件，修改对应的 user_id，然后直接运行项目即可
 
 __你可以通过以下方式获取用户id__
 
@@ -78,7 +64,7 @@ __你可以通过以下方式获取视频id__
 视频id就是```6610679501925911815```
 
 
-如果你正常运行命令```python video_download_run.py -upost 93515402600```的实例， 将会得到类似如下的log日志
+正常运行命令， 将会得到类似如下的log日志
 
 ```angular2html
 2018-10-11 20:11:21,039 - douyin_crawl.py[line:147] INFO - download_favorite_video 正在下载视频 Gaiamount_93515402600_#8k #hdr 论现场灯光的重要性～ 
