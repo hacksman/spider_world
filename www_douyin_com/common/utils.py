@@ -38,7 +38,9 @@ def get_device(token):
 
     device_info = requests.get(URL.api_device(token), timeout=10)
 
-    return device_info.json()
+    device_info_json = device_info.json()
+
+    return device_info_json
 
 # 拼装参数
 def params2str(params):
@@ -54,8 +56,11 @@ def gen_url(token, raw_url, query):
     if isinstance(query, dict):
         query = params2str(query)
     url = raw_url + "?" + query
-    resp = requests.post(URL.api_sign(token), json={"url": url}).json()
-    real_url = resp['url']
+    resp = requests.post(URL.api_sign(token), json={"url": url})
+    if resp.status_code != 200:
+        print("您当日的 api 次数已经使用完毕, 请明日再来爬取吧...")
+        return
+    real_url = resp.json()['url']
     return real_url
 
 # 混淆手机号码和密码
