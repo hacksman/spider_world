@@ -93,6 +93,19 @@ $ python douyin_crawl.py
 2019-05-07 20:06:52,657 - douyin_crawl.py[line:231] INFO - download_favorite_video 正在下载视频 冯提莫_58958068057_很多人说是想起了自己的故事吧～Afterlove《看到风》MV即将上线～ 
 ``` 
 
+在 /www_douyin_com/videos/ 下你将会看到一个以作者昵称命名的文件夹，里面就是对应的你需要下载的视频啦。
+
+### 备注
+
+为了避免滥用接口，鸡仔对接口的请求次数做了限制，如果你在使用的过程中，遇到了诸如一下的提示，说明你今日的次数调用得有点多啦，你可以拿更多的微信关注公众号获取次数，或者明日再来请求吧
+
+```
+您当日的 api 次数已经使用完毕, 请明日再来爬取吧...
+
+-------此处省略了部分错误日志-------
+
+requests.exceptions.MissingSchema: Invalid URL 'None': No schema supplied. Perhaps you meant http://None?
+
 
 ### TODO LIST
 
