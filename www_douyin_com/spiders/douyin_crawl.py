@@ -322,14 +322,22 @@ class DouyinCrawl(object):
 
 if __name__ == '__main__':
 
-    token = "关注公众号【鸡仔说】回复【抖音】获取自己的唯一 token 号"
+    # 关注公众号【鸡仔说】回复【抖音】获取自己的唯一 token 号
+    # 注：提取了 Token 值后，在 /www_douyin_com/config.py 中，将 token 值替换之后才可以运行，
+    # 不温馨提示：每日的 api 次数有限，省着点用~😬😬
 
     douyin = DouyinCrawl(TOKEN)
 
     aweme_id = "6675585689419091212"
 
-    user_id = "58969898627"
+    user_id = "58958068057"
 
+    # 下载用户发不过的视频
     douyin.grab_user_media(user_id, "USER_POST")
-    # douyin.grab_comment_main(aweme_id)
+    # 下载用户点赞过的视频
+    # douyin.grab_user_media(user_id, "USER_LIKE")
+    # 下载单个视频
     # douyin.download_one_video(aweme_id)
+    # 下载单个视频的评论信息
+    # douyin.grab_comment_main(aweme_id)
+
