@@ -30,7 +30,9 @@ $ cd spider_world/www_douyin_com/
 **你需要关注微信公众号：鸡仔说，回复抖音，将 config.py 目录下的 token 值替换成你的 token 值**
 
 你有两种方式运行这个项目：
+
 ①. 找到 spiders/douyin_crawl.py 文件，修改对应参数运行，然后直接运行即可
+
 ②. 找到 examples/fetch_video_test.py 文件，修改对应的 user_id，然后直接运行项目即可
 
 __你可以通过以下方式获取用户id__
