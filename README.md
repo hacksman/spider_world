@@ -30,7 +30,7 @@ $ cd spider_world/www_douyin_com/
 
 **获得 token 值后，你需要将 www_douyin_com/config.py 文件下的 TOKEN 值替换成你的 token 值**
 <p align="center">
-<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/key_word.jpeg" width="240">
+<img src="https://raw.githubusercontent.com/hacksman/spider_world/master/pictures/key_word.jpg" width="240">
 </p>
 
 
