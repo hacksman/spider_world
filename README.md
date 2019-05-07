@@ -27,7 +27,7 @@ $ cd spider_world/www_douyin_com/
 
 ##### step 2: 运行项目
 
-**你需要关注微信公众号：鸡仔说，回复抖音，将 config.py 目录下的 token 值替换成你的 token 值**
+**你需要关注微信公众号：【鸡仔说】，回复关键词"抖音"，将 config.py 目录下的 token 值替换成你的 token 值**
 
 你有两种方式运行这个项目：
 
